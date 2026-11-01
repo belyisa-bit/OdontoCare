@@ -1,0 +1,11 @@
+com\clinicaodonto\api\ClinicaOdontoApiApplication.class
+com\clinicaodonto\api\controllers\AgendamentoController.class
+com\clinicaodonto\api\repositories\DentistaRepository.class
+com\clinicaodonto\api\dtos\AgendamentoCreateDTO.class
+com\clinicaodonto\api\models\Dentista.class
+com\clinicaodonto\api\models\Tratamento.class
+com\clinicaodonto\api\dtos\AgendamentoDTO.class
+com\clinicaodonto\api\models\Agendamento.class
+com\clinicaodonto\api\repositories\AgendamentoRepository.class
+com\clinicaodonto\api\services\AgendamentoService.class
+com\clinicaodonto\api\repositories\TratamentoRepository.class

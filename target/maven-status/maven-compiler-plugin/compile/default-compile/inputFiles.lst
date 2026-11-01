@@ -1,0 +1,11 @@
+C:\Users\isabe\OdontoCare\src\main\java\com\clinicaodonto\api\ClinicaOdontoApiApplication.java
+C:\Users\isabe\OdontoCare\src\main\java\com\clinicaodonto\api\controllers\AgendamentoController.java
+C:\Users\isabe\OdontoCare\src\main\java\com\clinicaodonto\api\dtos\AgendamentoCreateDTO.java
+C:\Users\isabe\OdontoCare\src\main\java\com\clinicaodonto\api\dtos\AgendamentoDTO.java
+C:\Users\isabe\OdontoCare\src\main\java\com\clinicaodonto\api\models\Agendamento.java
+C:\Users\isabe\OdontoCare\src\main\java\com\clinicaodonto\api\models\Dentista.java
+C:\Users\isabe\OdontoCare\src\main\java\com\clinicaodonto\api\models\Tratamento.java
+C:\Users\isabe\OdontoCare\src\main\java\com\clinicaodonto\api\repositories\AgendamentoRepository.java
+C:\Users\isabe\OdontoCare\src\main\java\com\clinicaodonto\api\repositories\DentistaRepository.java
+C:\Users\isabe\OdontoCare\src\main\java\com\clinicaodonto\api\repositories\TratamentoRepository.java
+C:\Users\isabe\OdontoCare\src\main\java\com\clinicaodonto\api\services\AgendamentoService.java
