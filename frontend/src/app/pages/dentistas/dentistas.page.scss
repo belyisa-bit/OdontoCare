@@ -1,6 +1,6 @@
 ion-content { --background: #f2f7ff; --color: #101b46; }
 .dentists-layout { max-width: 1200px; min-height: calc(100dvh - 260px); margin: auto; padding: 28px 36px 55px; }
-.back-link { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; margin-bottom: 18px; color: #56708a; font-size: 16px; text-decoration: none; }
+.back-link { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; margin-bottom: 22px; padding: 11px 18px; border: 1px solid #9eccec; border-radius: 14px; background: #e0effc; color: #145b8b; font-size: 16px; font-weight: 650; line-height: 1.4; text-decoration: none; box-shadow: 0 2px 5px #30638c0d; }
 .page-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 27px; }
 h1 { font-size: 40px; font-weight: 750; letter-spacing: -1px; margin: 9px 0 12px; }
 .page-heading p { font-size: 16px; color: #61758e; line-height: 1.6; margin: 0; }
@@ -45,3 +45,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid #169ee8; outline-offs
 .back-link ion-icon { font-size: 20px; flex-shrink: 0; }
 .details-link ion-icon { font-size: 17px; }
 .demo-note { line-height: 1.6; }
+
+.back-link:hover { background: #cfe5f8; border-color: #6caedc; }
+.back-link:active { background: #bddbf2; }
+@media(max-width: 760px) { .back-link { min-height: 48px; margin-bottom: 20px; } }
