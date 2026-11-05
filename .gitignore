@@ -1,0 +1,6 @@
+# Java build output
+/backend/target/
+
+# Local system files
+.DS_Store
+Thumbs.db

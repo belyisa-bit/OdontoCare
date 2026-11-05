@@ -1,0 +1,35 @@
+<ion-app>
+  <ion-split-pane contentId="main-content" when="lg">
+    <ion-menu contentId="main-content">
+      <ion-header>
+        <ion-toolbar color="primary">
+          <ion-title>OdontoCare</ion-title>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content>
+        <ion-list>
+          <ion-menu-toggle autoHide="false">
+            <ion-item routerLink="/home" routerLinkActive="selected" detail="false">
+              <ion-label>Início</ion-label>
+            </ion-item>
+
+            <ion-item routerLink="/dentistas" routerLinkActive="selected" detail="false">
+              <ion-label>Dentistas</ion-label>
+            </ion-item>
+
+            <ion-item routerLink="/agendamentos" routerLinkActive="selected" detail="false">
+              <ion-label>Agendamentos</ion-label>
+            </ion-item>
+
+            <ion-item routerLink="/sobre" routerLinkActive="selected" detail="false">
+              <ion-label>Sobre</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+        </ion-list>
+      </ion-content>
+    </ion-menu>
+
+    <ion-router-outlet id="main-content"></ion-router-outlet>
+  </ion-split-pane>
+</ion-app>
