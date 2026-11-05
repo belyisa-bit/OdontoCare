@@ -16,7 +16,7 @@ h1 span { color: #008ff0; }
 .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 25px; }
 h2 { margin: 0; font-size: 27px; font-weight: 750; letter-spacing: -.6px; }
 a { color: inherit; text-decoration: none; }
-.section-heading > a { display: flex; align-items: center; gap: 7px; color: #087aba; font-size: 16px; min-height: 44px; white-space: nowrap; }
+.specialties-toggle { display: flex; align-items: center; gap: 7px; color: #087aba; font-size: 16px; min-height: 44px; white-space: nowrap; }
 .specialty-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 .specialty-card { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 170px; padding: 22px 10px; text-align: center; border: 1px solid #e2ecff; border-radius: 28px; background: linear-gradient(145deg, #ffffffad, #f4f8ff); box-shadow: 0 5px 10px #548bd21a; transition: transform .18s; }
 .specialty-card:hover { transform: translateY(-3px); }
@@ -38,10 +38,15 @@ a:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
   .specialties { padding: 24px 18px 35px; }
   .section-heading { margin-bottom: 20px; }
   h2 { font-size: 22px; }
-  .section-heading > a { font-size: 13px; }
+  .specialties-toggle { font-size: 13px; }
   .specialty-grid { gap: 10px; }
   .specialty-card { min-height: 115px; padding: 14px 5px; border-radius: 22px; }
   .specialty-icon svg { width: 37px; height: 37px; }
   h3 { font-size: 12px; margin-top: 8px; }
 }
 @media (prefers-reduced-motion: reduce) { .specialty-card { transition: none; } }
+
+.specialties-toggle { padding: 8px 0 8px 10px; min-height: 44px; border: 0; background: transparent; font-family: inherit; cursor: pointer; }
+.specialties-toggle:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; border-radius: 5px; }
+.specialties-toggle ion-icon.expanded { transform: rotate(-90deg); }
+h3 { max-width: 100%; overflow-wrap: anywhere; hyphens: auto; }

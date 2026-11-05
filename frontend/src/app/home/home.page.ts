@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonButton, IonContent, IonHeader, IonIcon } from '@ionic/angular';
 import { addIcons } from 'ionicons';
@@ -18,7 +18,23 @@ export class HomePage {
     { name: 'Clínico geral', icon: 'tooth' },
     { name: 'Ortodontia', icon: 'braces' },
     { name: 'Implantodontia', icon: 'implant' },
+    { name: 'Endodontia', icon: 'root-canal' },
+    { name: 'Periodontia', icon: 'gum' },
+    { name: 'Odontopediatria', icon: 'child' },
+    { name: 'Cirurgia bucomaxilofacial', icon: 'surgery' },
+    { name: 'Prótese dentária', icon: 'crown' },
+    { name: 'Dentística', icon: 'restoration' },
+    { name: 'Radiologia odontológica', icon: 'xray' },
   ];
+
+  readonly specialtiesExpanded = signal(false);
+  readonly visibleSpecialties = computed(() =>
+    this.specialtiesExpanded() ? this.specialties : this.specialties.slice(0, 3),
+  );
+
+  toggleSpecialties(): void {
+    this.specialtiesExpanded.update((expanded) => !expanded);
+  }
 
   constructor() {
     addIcons({ arrowForwardOutline });

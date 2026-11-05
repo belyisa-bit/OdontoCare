@@ -65,3 +65,23 @@ test('menu lateral pode ser recolhido e reaberto no computador', async ({ page }
   await page.getByRole('button', { name: 'Abrir menu', exact: true }).click();
   await expect.poll(async () => (await content.boundingBox())?.x).toBeGreaterThan(200);
 });
+
+test('expande as dez especialidades na Home e permite recolher', async ({ page }) => {
+  await page.goto('/home');
+  const cards = page.locator('.specialty-card');
+  await expect(cards).toHaveCount(3);
+  const expand = page.getByRole('button', { name: 'Ver todas', exact: true });
+  await expect(expand).toHaveAttribute('aria-expanded', 'false');
+  await expand.click();
+  await expect(page).toHaveURL(/\/home$/);
+  await expect(cards).toHaveCount(10);
+  const collapse = page.getByRole('button', { name: 'Mostrar menos', exact: true });
+  await expect(collapse).toHaveAttribute('aria-expanded', 'true');
+  await collapse.click();
+  await expect(cards).toHaveCount(3);
+  await expand.focus();
+  await page.keyboard.press('Enter');
+  await expect(cards).toHaveCount(10);
+  await page.getByRole('link', { name: 'Endodontia', exact: true }).click();
+  await expect(page).toHaveURL(/\/dentistas\?especialidade=Endodontia$/);
+});
