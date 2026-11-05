@@ -11,7 +11,7 @@ test('menu permite navegar no celular e fecha depois da escolha', async ({ page 
 });
 
 test('rotas diretas e endereço inexistente', async ({ page }) => {
-  for (const path of ['/dentistas/1', '/agendamentos', '/sobre']) {
+  for (const path of ['/sobre', '/login', '/cadastro']) {
     await page.goto(path);
     await expect(page).toHaveURL(new RegExp(`${path}$`));
     await expect(page.locator('ion-menu-button:visible')).toBeVisible();

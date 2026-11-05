@@ -24,7 +24,10 @@
       <ion-content>
         <div class="menu-intro">
           <span>Bem-vindo ao OdontoCare</span>
-          <p>Seu próximo sorriso começa aqui.</p>
+          <p>{{ auth.user()?.nome || 'Seu próximo sorriso começa aqui.' }}</p>
+          @if (logoutError) {
+            <p role="alert">{{ logoutError }}</p>
+          }
         </div>
         <nav aria-label="Navegação principal">
           <ion-list lines="none">
@@ -48,6 +51,12 @@
                 <ion-icon slot="start" name="person-outline" aria-hidden="true"></ion-icon>
                 <ion-label>Perfil</ion-label>
               </ion-item>
+              @if (auth.signedIn()) {
+                <ion-item [button]="true" [detail]="false" (click)="logout()">
+                  <ion-icon slot="start" name="person-outline" aria-hidden="true"></ion-icon>
+                  <ion-label>Sair da conta</ion-label>
+                </ion-item>
+              }
             </ion-menu-toggle>
           </ion-list>
         </nav>

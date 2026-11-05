@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, HostListener, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import {
   IonApp,
   MenuController,
@@ -20,6 +20,7 @@ import {
 import { addIcons } from 'ionicons';
 import { homeOutline, peopleOutline, calendarOutline, informationCircleOutline, personOutline } from 'ionicons/icons';
 
+import { AuthService } from './core/services/auth.service';
 import { SidebarService } from './core/services/sidebar.service';
 
 @Component({
@@ -47,6 +48,19 @@ import { SidebarService } from './core/services/sidebar.service';
 })
 export class AppComponent {
   readonly sidebar = inject(SidebarService);
+  readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
+  logoutError = '';
+
+  async logout(): Promise<void> {
+    this.logoutError = '';
+    try {
+      await this.auth.logout();
+      await this.router.navigateByUrl('/login', { replaceUrl: true });
+    } catch {
+      this.logoutError = 'Não foi possível sair. Tente novamente.';
+    }
+  }
   private readonly menus = inject(MenuController);
   private readonly document = inject(DOCUMENT);
   private menuOpener: HTMLElement | null = null;
@@ -104,6 +118,7 @@ export class AppComponent {
     if (menu) await menu.close();
   }
   constructor() {
+    void this.auth.restore();
     addIcons({ homeOutline, peopleOutline, calendarOutline, informationCircleOutline, personOutline });
   }
 }

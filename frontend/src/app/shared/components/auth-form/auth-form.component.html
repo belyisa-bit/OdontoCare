@@ -1,0 +1,138 @@
+<main class="auth-layout">
+  <aside class="welcome" aria-label="OdontoCare">
+    <span class="brand">Odonto<span>Care</span></span>
+    <svg viewBox="0 0 100 110" fill="none" aria-hidden="true">
+      <path d="M50 20C25 0 5 18 10 45c4 20 14 55 25 55 10 0 4-40 15-40s5 40 15 40c11 0 21-35 25-55C95 18 75 0 50 20Z" />
+      <path d="m50 20 18 6" />
+    </svg>
+    <h2>Seu próximo sorriso<br />começa aqui.</h2>
+    <p>Encontre nossa equipe e cuide do que faz você sorrir.</p>
+    <span class="welcome-note"
+      ><ion-icon name="lock-closed-outline" aria-hidden="true"></ion-icon> Um espaço para o seu cuidado</span
+    >
+  </aside>
+  <section class="form-panel" [attr.aria-labelledby]="registerMode() ? 'register-title' : 'login-title'">
+    <a class="back" routerLink="/home"
+      ><ion-icon name="arrow-back-outline" aria-hidden="true"></ion-icon> Voltar ao início</a
+    >
+    <span class="eyebrow">Bem-vindo ao OdontoCare</span>
+    <h1 [id]="registerMode() ? 'register-title' : 'login-title'">
+      {{ registerMode() ? 'Crie sua conta' : 'Que bom ter você aqui!' }}
+    </h1>
+    <p class="intro">
+      {{ registerMode() ? 'Preencha seus dados para começar.' : 'Entre para acessar seu perfil e seus agendamentos.' }}
+    </p>
+    @if (registered && !registerMode()) {
+      <p class="success" role="status">Cadastro concluído. Entre com seu e-mail e senha.</p>
+    }
+    @if (error()) {
+      <p class="error-message" role="alert">{{ error() }}</p>
+    }
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate [attr.aria-busy]="busy()">
+      <fieldset [disabled]="busy()">
+        @if (registerMode()) {
+          <label for="auth-name">Nome completo</label>
+          <input
+            id="auth-name"
+            formControlName="nome"
+            autocomplete="name"
+            maxlength="100"
+            [attr.aria-invalid]="invalid('nome')"
+            aria-describedby="name-error"
+            placeholder="Como podemos chamar você?"
+          />
+          <span id="name-error" class="field-error">{{
+            invalid('nome') ? 'Informe seu nome, com até 100 caracteres.' : ''
+          }}</span>
+        }
+        <label for="auth-email">E-mail</label>
+        <input
+          id="auth-email"
+          type="email"
+          formControlName="email"
+          autocomplete="email"
+          inputmode="email"
+          maxlength="254"
+          [attr.aria-invalid]="invalid('email')"
+          aria-describedby="email-error"
+          placeholder="voce@exemplo.com"
+        />
+        <span id="email-error" class="field-error">{{ invalid('email') ? 'Informe um e-mail válido.' : '' }}</span>
+        <label for="auth-password">Senha</label>
+        <div class="password-field">
+          <input
+            id="auth-password"
+            [type]="visiblePassword() ? 'text' : 'password'"
+            formControlName="senha"
+            [autocomplete]="registerMode() ? 'new-password' : 'current-password'"
+            maxlength="128"
+            [attr.aria-invalid]="invalid('senha')"
+            aria-describedby="password-help password-error"
+            placeholder="Sua senha"
+          />
+          <button
+            type="button"
+            class="visibility"
+            (click)="visiblePassword.set(!visiblePassword())"
+            [attr.aria-label]="visiblePassword() ? 'Ocultar senha' : 'Mostrar senha'"
+            [attr.aria-pressed]="visiblePassword()"
+          >
+            <ion-icon [name]="visiblePassword() ? 'eye-off-outline' : 'eye-outline'" aria-hidden="true"></ion-icon>
+          </button>
+        </div>
+        @if (registerMode()) {
+          <ul id="password-help" class="password-requirements" aria-label="Requisitos da senha">
+            @for (requirement of passwordRequirements(); track requirement.label) {
+              <li [class.met]="requirement.met">
+                <span class="requirement-check" aria-hidden="true">{{ requirement.met ? '✓' : '○' }}</span>
+                <span>{{ requirement.label }}</span>
+                <span class="sr-only">{{ requirement.met ? 'Atendido' : 'Pendente' }}</span>
+              </li>
+            }
+          </ul>
+          <span class="sr-only" role="status">{{ requirementsMet() }} de 5 requisitos atendidos.</span>
+        } @else {
+          <span id="password-help"></span>
+        }
+        <span id="password-error" class="field-error">{{
+          invalid('senha')
+            ? registerMode()
+              ? 'Complete os requisitos da senha indicados acima.'
+              : 'Informe sua senha.'
+            : ''
+        }}</span>
+        @if (registerMode()) {
+          <label for="auth-confirm">Confirmar senha</label>
+          <input
+            id="auth-confirm"
+            [type]="visiblePassword() ? 'text' : 'password'"
+            formControlName="confirmacao"
+            autocomplete="new-password"
+            maxlength="128"
+            [attr.aria-invalid]="invalid('confirmacao')"
+            aria-describedby="confirm-error"
+            placeholder="Repita sua senha"
+          />
+          <span id="confirm-error" class="field-error">{{
+            invalid('confirmacao') ? 'As senhas precisam ser iguais.' : ''
+          }}</span>
+        }
+        <ion-button type="submit" expand="block" [disabled]="busy()">
+          @if (busy()) {
+            <ion-spinner name="crescent" aria-hidden="true"></ion-spinner>
+          }
+          {{ busy() ? 'Aguarde…' : registerMode() ? 'Criar conta' : 'Entrar' }}
+          @if (!busy()) {
+            <ion-icon slot="end" name="arrow-forward-outline" aria-hidden="true"></ion-icon>
+          }
+        </ion-button>
+      </fieldset>
+    </form>
+    <p class="switch">
+      {{ registerMode() ? 'Já tem uma conta?' : 'Ainda não tem conta?' }}
+      <a [routerLink]="registerMode() ? '/login' : '/cadastro'" [queryParams]="{ returnUrl: returnUrl }">{{
+        registerMode() ? 'Entrar' : 'Cadastre-se'
+      }}</a>
+    </p>
+  </section>
+</main>
