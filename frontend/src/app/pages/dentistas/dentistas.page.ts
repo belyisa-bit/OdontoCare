@@ -4,7 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IonButton, IonContent, IonHeader, IonIcon, IonSearchbar, IonSkeletonText } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { arrowForwardOutline, arrowBackOutline, searchOutline, refreshOutline, peopleOutline } from 'ionicons/icons';
+import { arrowForwardOutline, arrowBackOutline, searchOutline, refreshOutline } from 'ionicons/icons';
 import { Subject, debounceTime } from 'rxjs';
 
 import type { Dentista } from '../../core/models/dentista.model';
@@ -73,7 +73,7 @@ export class DentistasPage implements OnInit {
   });
 
   constructor() {
-    addIcons({ arrowForwardOutline, arrowBackOutline, searchOutline, refreshOutline, peopleOutline });
+    addIcons({ arrowForwardOutline, arrowBackOutline, searchOutline, refreshOutline });
     this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       this.search.set((params.get('q') ?? '').slice(0, 120));
       const selected = (params.get('especialidade') ?? '').trim();
