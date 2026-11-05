@@ -1,6 +1,112 @@
 <ion-header class="ion-no-border"><app-page-header></app-page-header></ion-header>
-
-<ion-content
-  ><main class="page-content"><h1>Dentistas</h1></main>
-  <app-site-footer></app-site-footer
-></ion-content>
+<ion-content>
+  <main class="dentists-layout">
+    <a class="back-link" routerLink="/home"
+      ><ion-icon name="arrow-back-outline" aria-hidden="true"></ion-icon><span>Voltar para o início</span></a
+    >
+    <div class="page-heading">
+      <div>
+        <h1>Dentistas</h1>
+        <p>Busque por nome ou especialidade.</p>
+      </div>
+    </div>
+    <div class="search-area">
+      <ion-searchbar
+        aria-label="Buscar dentista, especialidade ou CRO"
+        placeholder="Buscar dentista, especialidade…"
+        [value]="search()"
+        [debounce]="0"
+        (ionInput)="onSearch($event)"
+      ></ion-searchbar>
+    </div>
+    <nav class="specialty-filters" aria-label="Filtrar por especialidade">
+      <button
+        type="button"
+        [class.active]="!specialty()"
+        [attr.aria-pressed]="!specialty()"
+        (click)="selectSpecialty('')"
+      >
+        Todos
+      </button>
+      @for (name of specialties(); track name) {
+      <button
+        type="button"
+        [class.active]="specialty() === name"
+        [attr.aria-pressed]="specialty() === name"
+        (click)="selectSpecialty(name)"
+      >
+        {{ name }}
+      </button>
+      }
+    </nav>
+    <div class="demo-note"><span></span> Perfis e fotos fictícios para demonstração.</div>
+    @if (loading()) {
+    <p class="result-count" role="status">Carregando profissionais…</p>
+    <div class="dentist-grid" aria-hidden="true">
+      @for (item of [1, 2, 3, 4, 5, 6]; track item) {
+      <div class="skeleton-card">
+        <ion-skeleton-text [animated]="true"></ion-skeleton-text
+        ><ion-skeleton-text [animated]="true"></ion-skeleton-text>
+      </div>
+      }
+    </div>
+    } @else if (error()) {
+    <section class="empty-state" aria-labelledby="error-title" role="alert">
+      <span class="state-icon"><ion-icon name="refresh-outline" aria-hidden="true"></ion-icon></span>
+      <h2 id="error-title">Não foi possível carregar os dentistas</h2>
+      <p>Confira sua conexão e tente novamente.</p>
+      <ion-button (click)="loadDentists()">Tentar novamente</ion-button>
+    </section>
+    } @else {
+    <div class="results-heading">
+      <div class="results-summary">
+        <p class="result-count" role="status" aria-live="polite">{{ resultLabel() }}</p>
+        @if (specialty()) { <span class="selected-specialty">{{ specialty() }}</span> }
+      </div>
+      @if (filtersActive()) {
+      <button class="clear-filters" type="button" (click)="clearFilters()">Limpar filtros</button> }
+    </div>
+    @if (filteredDentists().length === 0) {
+    <section class="empty-state" aria-labelledby="empty-title">
+      <span class="state-icon"><ion-icon name="search-outline" aria-hidden="true"></ion-icon></span>
+      <h2 id="empty-title">Nenhum profissional encontrado</h2>
+      <p>Tente outro nome ou escolha uma especialidade diferente.</p>
+      <ion-button fill="outline" (click)="clearFilters()">Limpar busca e filtros</ion-button>
+    </section>
+    } @else {
+    <div class="dentist-grid">
+      @for (dentista of filteredDentists(); track dentista.id) {
+      <a
+        class="dentist-card"
+        [routerLink]="['/dentistas', dentista.id]"
+        [attr.aria-label]="'Ver detalhes de ' + dentista.nome"
+      >
+        <span class="avatar" aria-hidden="true">
+          @if (dentista.fotoUrl && !failedPhotos().has(dentista.id)) {
+          <img
+            [src]="dentista.fotoUrl"
+            alt=""
+            width="88"
+            height="100"
+            loading="lazy"
+            decoding="async"
+            (error)="onPhotoError(dentista.id)"
+          />
+          } @else { {{ initials(dentista.nome) }} }
+        </span>
+        <div class="dentist-info">
+          <span class="specialty-label">{{ dentista.especialidade }}</span>
+          <h2>{{ dentista.nome }}</h2>
+          @if (dentista.cro) {
+          <p class="registration">CRO {{ dentista.cro }}</p>
+          }<span class="details-link"
+            >Ver detalhes <ion-icon name="arrow-forward-outline" aria-hidden="true"></ion-icon
+          ></span>
+        </div>
+      </a>
+      }
+    </div>
+    } }
+  </main>
+  <app-site-footer></app-site-footer>
+</ion-content>

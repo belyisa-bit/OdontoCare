@@ -1,0 +1,110 @@
+[
+  {
+    "id": 1,
+    "nome": "Dra. Ana Bezerra",
+    "especialidade": "Ortodontia",
+    "cro": null,
+    "telefone": null,
+    "email": null,
+    "fotoUrl": "assets/images/retratos/ana-bezerra.webp"
+  },
+  {
+    "id": 2,
+    "nome": "Dr. Lucas Martins",
+    "especialidade": "Implantodontia",
+    "cro": null,
+    "telefone": null,
+    "email": null,
+    "fotoUrl": "assets/images/retratos/lucas-martins.webp"
+  },
+  {
+    "id": 3,
+    "nome": "Dra. Carla Santos",
+    "especialidade": "Clínico geral",
+    "cro": null,
+    "telefone": null,
+    "email": null,
+    "fotoUrl": "assets/images/retratos/carla-santos.webp"
+  },
+  {
+    "id": 4,
+    "nome": "Dr. Renato Lima",
+    "especialidade": "Periodontia",
+    "cro": null,
+    "telefone": null,
+    "email": null,
+    "fotoUrl": "assets/images/retratos/renato-lima.webp"
+  },
+  {
+    "id": 5,
+    "nome": "Dra. Juliana Costa",
+    "especialidade": "Endodontia",
+    "cro": null,
+    "telefone": null,
+    "email": null,
+    "fotoUrl": "assets/images/retratos/juliana-costa.webp"
+  },
+  {
+    "id": 6,
+    "nome": "Dr. Rafael Mendes",
+    "especialidade": "Odontopediatria",
+    "cro": null,
+    "telefone": null,
+    "email": null,
+    "fotoUrl": "assets/images/retratos/rafael-mendes.webp"
+  },
+  {
+    "id": 7,
+    "nome": "Dra. Fernanda Alves",
+    "especialidade": "Cirurgia bucomaxilofacial",
+    "cro": null,
+    "telefone": null,
+    "email": null,
+    "fotoUrl": "assets/images/retratos/fernanda-alves.webp"
+  },
+  {
+    "id": 8,
+    "nome": "Dr. Pedro Oliveira",
+    "especialidade": "Prótese dentária",
+    "cro": null,
+    "telefone": null,
+    "email": null,
+    "fotoUrl": "assets/images/retratos/pedro-oliveira.webp"
+  },
+  {
+    "id": 9,
+    "nome": "Dra. Camila Rocha",
+    "especialidade": "Dentística",
+    "cro": null,
+    "telefone": null,
+    "email": null,
+    "fotoUrl": "assets/images/retratos/camila-rocha.webp"
+  },
+  {
+    "id": 10,
+    "nome": "Dr. Bruno Ferreira",
+    "especialidade": "Radiologia odontológica",
+    "cro": null,
+    "telefone": null,
+    "email": null,
+    "fotoUrl": "assets/images/retratos/bruno-ferreira.webp"
+  },
+  {
+    "id": 11,
+    "nome": "Dra. Marina Souza",
+    "especialidade": "Ortodontia",
+    "cro": null,
+    "telefone": null,
+    "email": null,
+    "fotoUrl": "assets/images/retratos/marina-souza.webp"
+  },
+  {
+    "id": 12,
+    "nome": "Dr. André Ribeiro",
+    "especialidade": "Clínico geral",
+    "cro": null,
+    "telefone": null,
+    "email": null,
+    "fotoUrl": "assets/images/retratos/andre-ribeiro.webp"
+  }
+]
