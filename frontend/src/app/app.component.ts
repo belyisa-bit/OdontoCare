@@ -1,10 +1,13 @@
-import { Component } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Component, HostListener, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import {
   IonApp,
+  MenuController,
   IonContent,
   IonHeader,
   IonItem,
+  IonIcon,
   IonLabel,
   IonList,
   IonMenu,
@@ -14,6 +17,8 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import { homeOutline, peopleOutline, calendarOutline, informationCircleOutline, personOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-root',
@@ -27,6 +32,7 @@ import {
     IonContent,
     IonHeader,
     IonItem,
+    IonIcon,
     IonLabel,
     IonList,
     IonMenu,
@@ -37,4 +43,64 @@ import {
     IonToolbar,
   ],
 })
-export class AppComponent {}
+export class AppComponent {
+  private readonly menus = inject(MenuController);
+  private readonly document = inject(DOCUMENT);
+  private menuOpener: HTMLElement | null = null;
+
+  rememberMenuFocus(): void {
+    let active = this.document.activeElement;
+    while (active?.shadowRoot?.activeElement) active = active.shadowRoot.activeElement;
+    this.menuOpener = active instanceof HTMLElement ? active : null;
+  }
+
+  focusMenu(event: Event): void {
+    this.menuLinks(event.target as HTMLElement)[0]?.focus();
+  }
+
+  restoreMenuFocus(): void {
+    const opener = this.menuOpener;
+    this.menuOpener = null;
+    requestAnimationFrame(() => {
+      const trigger = Array.from(this.document.querySelectorAll('ion-menu-button')).find(
+        (item) => item.getClientRects().length > 0,
+      );
+      const button = trigger?.shadowRoot?.querySelector<HTMLButtonElement>('button');
+      if (button) button.focus();
+      else if (opener?.getClientRects().length) opener.focus();
+    });
+  }
+
+  private menuLinks(menu: HTMLElement): HTMLElement[] {
+    return Array.from(menu.querySelectorAll('ion-item'))
+      .map((item) => item.shadowRoot?.querySelector<HTMLElement>('a, button'))
+      .filter((item): item is HTMLElement => !!item);
+  }
+
+  onMenuKeydown(event: KeyboardEvent): void {
+    if (event.key !== 'Tab') return;
+    const menu = event.currentTarget as HTMLElement;
+    if (!menu.classList.contains('show-menu')) return;
+    const links = this.menuLinks(menu);
+    const current = event.composedPath()[0];
+    const first = links[0];
+    const last = links[links.length - 1];
+    if (event.shiftKey && current === first) {
+      event.preventDefault();
+      last?.focus();
+    }
+    if (!event.shiftKey && current === last) {
+      event.preventDefault();
+      first?.focus();
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  async closeMenuWithEscape(): Promise<void> {
+    const menu = await this.menus.getOpen();
+    if (menu) await menu.close();
+  }
+  constructor() {
+    addIcons({ homeOutline, peopleOutline, calendarOutline, informationCircleOutline, personOutline });
+  }
+}
