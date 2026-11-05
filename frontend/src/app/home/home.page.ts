@@ -4,6 +4,7 @@ import { IonButton, IonContent, IonHeader, IonIcon } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { arrowForwardOutline } from 'ionicons/icons';
 
+import { ESPECIALIDADES } from '../core/models/especialidade.model';
 import { PageHeaderComponent } from '../shared/components/page-header/page-header.component';
 import { SiteFooterComponent } from '../shared/components/site-footer/site-footer.component';
 
@@ -14,18 +15,7 @@ import { SiteFooterComponent } from '../shared/components/site-footer/site-foote
   imports: [PageHeaderComponent, SiteFooterComponent, RouterLink, IonButton, IonContent, IonHeader, IonIcon],
 })
 export class HomePage {
-  readonly specialties = [
-    { name: 'Clínico geral', icon: 'tooth' },
-    { name: 'Ortodontia', icon: 'braces' },
-    { name: 'Implantodontia', icon: 'implant' },
-    { name: 'Endodontia', icon: 'root-canal' },
-    { name: 'Periodontia', icon: 'gum' },
-    { name: 'Odontopediatria', icon: 'child' },
-    { name: 'Cirurgia bucomaxilofacial', icon: 'surgery' },
-    { name: 'Prótese dentária', icon: 'crown' },
-    { name: 'Dentística', icon: 'restoration' },
-    { name: 'Radiologia odontológica', icon: 'xray' },
-  ];
+  readonly specialties = ESPECIALIDADES;
 
   readonly specialtiesExpanded = signal(false);
   readonly visibleSpecialties = computed(() =>
