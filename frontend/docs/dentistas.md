@@ -21,4 +21,4 @@ O backend atual não expõe um endpoint para listar dentistas. Quando estiver di
 A lista de demonstração será substituída pela API; nenhum cadastro real ou agendamento é realizado nesta feature.
 ## Retratos de demonstração
 
-As fotos foram geradas por IA para estes perfis fictícios e ficam em assets/images/dentistas. Não representam profissionais reais. A propriedade fotoUrl é opcional; em caso de falha no carregamento, o card apresenta as iniciais do nome. As imagens usam WebP, carregamento sob demanda e dimensões reservadas para evitar alterações no layout.
+As fotos foram geradas por IA para estes perfis fictícios e ficam em assets/images/retratos. Não representam profissionais reais. A propriedade fotoUrl é opcional; em caso de falha no carregamento, o card apresenta as iniciais do nome. As imagens usam WebP, carregamento sob demanda e dimensões reservadas para evitar alterações no layout.

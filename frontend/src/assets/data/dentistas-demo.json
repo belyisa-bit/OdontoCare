@@ -6,7 +6,7 @@
     "cro": null,
     "telefone": null,
     "email": null,
-    "fotoUrl": "assets/images/dentistas/ana-bezerra.webp"
+    "fotoUrl": "assets/images/retratos/ana-bezerra.webp"
   },
   {
     "id": 2,
@@ -15,7 +15,7 @@
     "cro": null,
     "telefone": null,
     "email": null,
-    "fotoUrl": "assets/images/dentistas/lucas-martins.webp"
+    "fotoUrl": "assets/images/retratos/lucas-martins.webp"
   },
   {
     "id": 3,
@@ -24,7 +24,7 @@
     "cro": null,
     "telefone": null,
     "email": null,
-    "fotoUrl": "assets/images/dentistas/carla-santos.webp"
+    "fotoUrl": "assets/images/retratos/carla-santos.webp"
   },
   {
     "id": 4,
@@ -33,7 +33,7 @@
     "cro": null,
     "telefone": null,
     "email": null,
-    "fotoUrl": "assets/images/dentistas/renato-lima.webp"
+    "fotoUrl": "assets/images/retratos/renato-lima.webp"
   },
   {
     "id": 5,
@@ -42,7 +42,7 @@
     "cro": null,
     "telefone": null,
     "email": null,
-    "fotoUrl": "assets/images/dentistas/juliana-costa.webp"
+    "fotoUrl": "assets/images/retratos/juliana-costa.webp"
   },
   {
     "id": 6,
@@ -51,7 +51,7 @@
     "cro": null,
     "telefone": null,
     "email": null,
-    "fotoUrl": "assets/images/dentistas/rafael-mendes.webp"
+    "fotoUrl": "assets/images/retratos/rafael-mendes.webp"
   },
   {
     "id": 7,
@@ -60,7 +60,7 @@
     "cro": null,
     "telefone": null,
     "email": null,
-    "fotoUrl": "assets/images/dentistas/fernanda-alves.webp"
+    "fotoUrl": "assets/images/retratos/fernanda-alves.webp"
   },
   {
     "id": 8,
@@ -69,7 +69,7 @@
     "cro": null,
     "telefone": null,
     "email": null,
-    "fotoUrl": "assets/images/dentistas/pedro-oliveira.webp"
+    "fotoUrl": "assets/images/retratos/pedro-oliveira.webp"
   },
   {
     "id": 9,
@@ -78,7 +78,7 @@
     "cro": null,
     "telefone": null,
     "email": null,
-    "fotoUrl": "assets/images/dentistas/camila-rocha.webp"
+    "fotoUrl": "assets/images/retratos/camila-rocha.webp"
   },
   {
     "id": 10,
@@ -87,7 +87,7 @@
     "cro": null,
     "telefone": null,
     "email": null,
-    "fotoUrl": "assets/images/dentistas/bruno-ferreira.webp"
+    "fotoUrl": "assets/images/retratos/bruno-ferreira.webp"
   },
   {
     "id": 11,
@@ -96,7 +96,7 @@
     "cro": null,
     "telefone": null,
     "email": null,
-    "fotoUrl": "assets/images/dentistas/marina-souza.webp"
+    "fotoUrl": "assets/images/retratos/marina-souza.webp"
   },
   {
     "id": 12,
@@ -105,6 +105,6 @@
     "cro": null,
     "telefone": null,
     "email": null,
-    "fotoUrl": "assets/images/dentistas/andre-ribeiro.webp"
+    "fotoUrl": "assets/images/retratos/andre-ribeiro.webp"
   }
 ]

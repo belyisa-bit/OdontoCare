@@ -4,7 +4,7 @@ As 12 imagens foram geradas com a ferramenta integrada imagegen para o projeto a
 
 ## Arquivos
 
-As versões finais estão em src/assets/images/dentistas, no formato WebP com 400 pixels de largura, mantendo a proporção da geração original. Nomes: ana-bezerra.webp, lucas-martins.webp, carla-santos.webp, renato-lima.webp, juliana-costa.webp, rafael-mendes.webp, fernanda-alves.webp, pedro-oliveira.webp, camila-rocha.webp, bruno-ferreira.webp, marina-souza.webp e andre-ribeiro.webp.
+As versões finais estão em src/assets/images/retratos, no formato WebP com 400 pixels de largura, mantendo a proporção da geração original. Nomes: ana-bezerra.webp, lucas-martins.webp, carla-santos.webp, renato-lima.webp, juliana-costa.webp, rafael-mendes.webp, fernanda-alves.webp, pedro-oliveira.webp, camila-rocha.webp, bruno-ferreira.webp, marina-souza.webp e andre-ribeiro.webp.
 
 ## Prompt de geração
 
