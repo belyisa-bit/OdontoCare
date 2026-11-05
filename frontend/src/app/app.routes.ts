@@ -27,6 +27,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/sobre/sobre.page').then((m) => m.SobrePage),
   },
   {
+    path: 'perfil',
+    loadComponent: () => import('./pages/perfil/perfil.page').then((m) => m.PerfilPage),
+  },
+  {
     path: '**',
     redirectTo: 'home',
   },

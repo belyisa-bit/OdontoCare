@@ -1,35 +1,64 @@
 <ion-app>
-  <ion-split-pane contentId="main-content" when="lg">
-    <ion-menu contentId="main-content">
-      <ion-header>
-        <ion-toolbar color="primary">
-          <ion-title>OdontoCare</ion-title>
+  <ion-split-pane contentId="main-content" [when]="sidebar.collapsed() ? false : 'lg'">
+    <ion-menu
+      id="main-menu"
+      contentId="main-content"
+      (ionWillOpen)="rememberMenuFocus()"
+      (ionDidOpen)="focusMenu($event)"
+      (ionDidClose)="restoreMenuFocus()"
+      (keydown)="onMenuKeydown($event)"
+    >
+      <ion-header class="ion-no-border">
+        <ion-toolbar>
+          <ion-title>
+            <span class="menu-brand">
+              <svg viewBox="0 0 40 44" aria-hidden="true">
+                <path d="M20 7C10-1 2 5 4 17c1 7 5 22 9 22 4 0 2-15 7-15s3 15 7 15c4 0 8-15 9-22C38 5 30-1 20 7Z" />
+                <path d="m20 7 7 3" />
+              </svg>
+              <span>Odonto<span class="brand-accent">Care</span></span>
+            </span>
+          </ion-title>
         </ion-toolbar>
       </ion-header>
-
       <ion-content>
-        <ion-list>
-          <ion-menu-toggle autoHide="false">
-            <ion-item routerLink="/home" routerLinkActive="selected" detail="false">
-              <ion-label>Início</ion-label>
-            </ion-item>
-
-            <ion-item routerLink="/dentistas" routerLinkActive="selected" detail="false">
-              <ion-label>Dentistas</ion-label>
-            </ion-item>
-
-            <ion-item routerLink="/agendamentos" routerLinkActive="selected" detail="false">
-              <ion-label>Agendamentos</ion-label>
-            </ion-item>
-
-            <ion-item routerLink="/sobre" routerLinkActive="selected" detail="false">
-              <ion-label>Sobre</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
-        </ion-list>
+        <div class="menu-intro">
+          <span>Bem-vindo ao OdontoCare</span>
+          <p>Seu próximo sorriso começa aqui.</p>
+        </div>
+        <nav aria-label="Navegação principal">
+          <ion-list lines="none">
+            <ion-menu-toggle [autoHide]="false">
+              <ion-item routerLink="/home" routerLinkActive="selected" [detail]="false">
+                <ion-icon slot="start" name="home-outline" aria-hidden="true"></ion-icon><ion-label>Início</ion-label>
+              </ion-item>
+              <ion-item routerLink="/dentistas" routerLinkActive="selected" [detail]="false">
+                <ion-icon slot="start" name="people-outline" aria-hidden="true"></ion-icon
+                ><ion-label>Dentistas</ion-label>
+              </ion-item>
+              <ion-item routerLink="/agendamentos" routerLinkActive="selected" [detail]="false">
+                <ion-icon slot="start" name="calendar-outline" aria-hidden="true"></ion-icon
+                ><ion-label>Agendamentos</ion-label>
+              </ion-item>
+              <ion-item routerLink="/sobre" routerLinkActive="selected" [detail]="false">
+                <ion-icon slot="start" name="information-circle-outline" aria-hidden="true"></ion-icon
+                ><ion-label>Sobre</ion-label>
+              </ion-item>
+              <ion-item routerLink="/perfil" routerLinkActive="selected" [detail]="false">
+                <ion-icon slot="start" name="person-outline" aria-hidden="true"></ion-icon>
+                <ion-label>Perfil</ion-label>
+              </ion-item>
+            </ion-menu-toggle>
+          </ion-list>
+        </nav>
+        <div class="menu-footer" aria-hidden="true">
+          <svg viewBox="0 0 40 44">
+            <path d="M20 7C10-1 2 5 4 17c1 7 5 22 9 22 4 0 2-15 7-15s3 15 7 15c4 0 8-15 9-22C38 5 30-1 20 7Z" />
+          </svg>
+          <span>Um novo motivo para sorrir.</span>
+        </div>
       </ion-content>
     </ion-menu>
-
     <ion-router-outlet id="main-content"></ion-router-outlet>
   </ion-split-pane>
 </ion-app>
