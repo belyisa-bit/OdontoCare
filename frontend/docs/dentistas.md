@@ -4,7 +4,7 @@ A página /dentistas usa o mesmo cabeçalho e rodapé da Home. Permite busca por
 
 ## Fonte atual
 
-Os 12 profissionais de assets/data/dentistas-demo.json são fictícios e a tela informa isso. Não foram inventados registros CRO, avaliações, fotos, endereços ou contatos. A estrutura dos dados acompanha DentistaDTO do backend.
+Os 12 profissionais de assets/data/dentistas-demo.json são fictícios e a tela informa isso. Não foram inventados registros CRO, avaliações, endereços ou contatos. A estrutura dos dados acompanha DentistaDTO do backend.
 
 O backend atual não expõe um endpoint para listar dentistas. Quando estiver disponível, substituir a fonte em DentistasService.listar() por um adapter para esse endpoint, mantendo o retorno Promise<Dentista[]> ou ajustando o componente em conjunto. A página não usa a lista global de agendamentos.
 
@@ -19,3 +19,6 @@ O backend atual não expõe um endpoint para listar dentistas. Quando estiver di
 - As dez especialidades estão em core/models/especialidade.model.ts, compartilhadas pela Home e pelos filtros.
 
 A lista de demonstração será substituída pela API; nenhum cadastro real ou agendamento é realizado nesta feature.
+## Retratos de demonstração
+
+As fotos foram geradas por IA para estes perfis fictícios e ficam em assets/images/dentistas. Não representam profissionais reais. A propriedade fotoUrl é opcional; em caso de falha no carregamento, o card apresenta as iniciais do nome. As imagens usam WebP, carregamento sob demanda e dimensões reservadas para evitar alterações no layout.

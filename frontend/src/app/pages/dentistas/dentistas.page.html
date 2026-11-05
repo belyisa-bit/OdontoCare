@@ -41,7 +41,7 @@
       </button>
       }
     </nav>
-    <div class="demo-note"><span></span> Profissionais fictícios para demonstração.</div>
+    <div class="demo-note"><span></span> Perfis e fotos fictícios para demonstração.</div>
     @if (loading()) {
     <p class="result-count" role="status">Carregando profissionais…</p>
     <div class="dentist-grid" aria-hidden="true">
@@ -83,9 +83,19 @@
         [routerLink]="['/dentistas', dentista.id]"
         [attr.aria-label]="'Ver detalhes de ' + dentista.nome"
       >
-        <span class="avatar" aria-hidden="true"
-          >{{ initials(dentista.nome) }}<span class="avatar-mark"><ion-icon name="medical-outline"></ion-icon></span
-        ></span>
+        <span class="avatar" aria-hidden="true">
+          @if (dentista.fotoUrl && !failedPhotos().has(dentista.id)) {
+          <img
+            [src]="dentista.fotoUrl"
+            alt=""
+            width="88"
+            height="100"
+            loading="lazy"
+            decoding="async"
+            (error)="onPhotoError(dentista.id)"
+          />
+          } @else { {{ initials(dentista.nome) }} }
+        </span>
         <div class="dentist-info">
           <span class="specialty-label">{{ dentista.especialidade }}</span>
           <h2>{{ dentista.nome }}</h2>

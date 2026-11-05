@@ -4,14 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IonButton, IonContent, IonHeader, IonIcon, IonSearchbar, IonSkeletonText } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import {
-  arrowForwardOutline,
-  arrowBackOutline,
-  searchOutline,
-  medicalOutline,
-  refreshOutline,
-  peopleOutline,
-} from 'ionicons/icons';
+import { arrowForwardOutline, arrowBackOutline, searchOutline, refreshOutline, peopleOutline } from 'ionicons/icons';
 import { Subject, debounceTime } from 'rxjs';
 
 import type { Dentista } from '../../core/models/dentista.model';
@@ -56,6 +49,7 @@ export class DentistasPage implements OnInit {
   readonly loading = signal(true);
   readonly error = signal(false);
   readonly search = signal('');
+  readonly failedPhotos = signal<Set<number>>(new Set());
   readonly specialty = signal('');
   readonly filtersActive = computed(() => !!this.search().trim() || !!this.specialty());
   readonly specialties = computed(() => {
@@ -79,7 +73,7 @@ export class DentistasPage implements OnInit {
   });
 
   constructor() {
-    addIcons({ arrowForwardOutline, arrowBackOutline, searchOutline, medicalOutline, refreshOutline, peopleOutline });
+    addIcons({ arrowForwardOutline, arrowBackOutline, searchOutline, refreshOutline, peopleOutline });
     this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       this.search.set((params.get('q') ?? '').slice(0, 120));
       const selected = (params.get('especialidade') ?? '').trim();
@@ -123,6 +117,10 @@ export class DentistasPage implements OnInit {
     this.search.set('');
     this.specialty.set('');
     this.persistFilters();
+  }
+
+  onPhotoError(id: number): void {
+    this.failedPhotos.update((ids) => new Set([...ids, id]));
   }
 
   initials(name: string): string {

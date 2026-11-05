@@ -39,3 +39,18 @@ test('falha na fonte de dados mostra erro e nova tentativa recupera a lista', as
   await page.getByRole('button', { name: 'Tentar novamente', exact: true }).click();
   await expect(page.locator('.dentist-card')).toHaveCount(12);
 });
+
+test('retratos carregam e uma foto indisponível usa as iniciais', async ({ page }) => {
+  await page.goto('/dentistas');
+  const firstCard = page.locator('.dentist-card').first();
+  await expect(firstCard.locator('img')).toBeVisible();
+  await expect
+    .poll(() => firstCard.locator('img').evaluate((image) => (image as HTMLImageElement).naturalWidth))
+    .toBeGreaterThan(0);
+  await expect(page.locator('.avatar-mark')).toHaveCount(0);
+  await page.route('**/ana-bezerra.webp', (route) => route.abort());
+  await page.reload();
+  await expect(firstCard.locator('.avatar')).toHaveText('AB');
+  await expect(firstCard.locator('img')).toHaveCount(0);
+  await expect(firstCard).toContainText('Ana Bezerra');
+});

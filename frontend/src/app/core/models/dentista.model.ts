@@ -5,4 +5,5 @@ export interface Dentista {
   cro: string | null;
   telefone: string | null;
   email: string | null;
+  fotoUrl?: string;
 }
