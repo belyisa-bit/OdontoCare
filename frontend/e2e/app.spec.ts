@@ -54,3 +54,14 @@ test('menu e lembretes funcionam pelo teclado e devolvem o foco', async ({ page 
   await expect(page.locator('ion-popover')).not.toBeVisible();
   await expect(bellButton).toBeFocused();
 });
+
+test('menu lateral pode ser recolhido e reaberto no computador', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('/home');
+  const content = page.locator('ion-router-outlet');
+  await expect.poll(async () => (await content.boundingBox())?.x).toBeGreaterThan(200);
+  await page.getByRole('button', { name: 'Recolher menu', exact: true }).click();
+  await expect.poll(async () => (await content.boundingBox())?.x).toBe(0);
+  await page.getByRole('button', { name: 'Abrir menu', exact: true }).click();
+  await expect.poll(async () => (await content.boundingBox())?.x).toBeGreaterThan(200);
+});

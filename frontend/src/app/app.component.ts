@@ -20,6 +20,8 @@ import {
 import { addIcons } from 'ionicons';
 import { homeOutline, peopleOutline, calendarOutline, informationCircleOutline, personOutline } from 'ionicons/icons';
 
+import { SidebarService } from './core/services/sidebar.service';
+
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -44,6 +46,7 @@ import { homeOutline, peopleOutline, calendarOutline, informationCircleOutline, 
   ],
 })
 export class AppComponent {
+  readonly sidebar = inject(SidebarService);
   private readonly menus = inject(MenuController);
   private readonly document = inject(DOCUMENT);
   private menuOpener: HTMLElement | null = null;

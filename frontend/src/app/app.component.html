@@ -1,6 +1,7 @@
 <ion-app>
-  <ion-split-pane contentId="main-content" when="lg">
+  <ion-split-pane contentId="main-content" [when]="sidebar.collapsed() ? false : 'lg'">
     <ion-menu
+      id="main-menu"
       contentId="main-content"
       (ionWillOpen)="rememberMenuFocus()"
       (ionDidOpen)="focusMenu($event)"

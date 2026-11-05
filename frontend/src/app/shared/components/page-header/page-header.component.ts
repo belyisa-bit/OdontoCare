@@ -1,9 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { IonButton, IonIcon, IonMenuButton, IonPopover, IonToolbar } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { notificationsOutline } from 'ionicons/icons';
+import { notificationsOutline, menuOutline } from 'ionicons/icons';
 
 import { NotificationsService } from '../../../core/services/notifications.service';
+import { SidebarService } from '../../../core/services/sidebar.service';
 import { NotificationPanelComponent } from '../notification-panel/notification-panel.component';
 
 @Component({
@@ -13,6 +14,16 @@ import { NotificationPanelComponent } from '../notification-panel/notification-p
     <ion-toolbar>
       <div class="header-row">
         <ion-menu-button aria-label="Abrir menu"></ion-menu-button>
+        <ion-button
+          class="desktop-menu-button"
+          fill="clear"
+          [attr.aria-label]="sidebar.collapsed() ? 'Abrir menu' : 'Recolher menu'"
+          [attr.aria-expanded]="!sidebar.collapsed()"
+          aria-controls="main-menu"
+          (click)="sidebar.toggle()"
+        >
+          <ion-icon slot="icon-only" name="menu-outline" aria-hidden="true"></ion-icon>
+        </ion-button>
         <span class="brand" aria-label="OdontoCare">
           <svg viewBox="0 0 40 44" aria-hidden="true">
             <path d="M20 7C10-1 2 5 4 17c1 7 5 22 9 22 4 0 2-15 7-15s3 15 7 15c4 0 8-15 9-22C38 5 30-1 20 7Z" />
@@ -44,6 +55,27 @@ import { NotificationPanelComponent } from '../notification-panel/notification-p
     </ion-popover>
   `,
   styles: `
+    .desktop-menu-button {
+      display: none;
+    }
+    @media (min-width: 992px) {
+      ion-menu-button {
+        display: none;
+      }
+      .header-row .desktop-menu-button {
+        display: block;
+        flex: 0 0 44px;
+        width: 44px;
+        height: 44px;
+        margin: 0;
+        --color: #169ee8;
+        --padding-start: 10px;
+        --padding-end: 10px;
+      }
+      .desktop-menu-button ion-icon {
+        font-size: 26px;
+      }
+    }
     :host {
       display: block;
       background: #f2f7ff;
@@ -163,12 +195,13 @@ import { NotificationPanelComponent } from '../notification-panel/notification-p
   `,
 })
 export class PageHeaderComponent {
+  readonly sidebar = inject(SidebarService);
   readonly notifications = inject(NotificationsService);
   remindersOpen = false;
   reminderEvent?: Event;
 
   constructor() {
-    addIcons({ notificationsOutline });
+    addIcons({ notificationsOutline, menuOutline });
   }
 
   openReminders(event: Event): void {
