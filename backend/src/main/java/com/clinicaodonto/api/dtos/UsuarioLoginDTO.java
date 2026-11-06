@@ -1,21 +1,20 @@
 package com.clinicaodonto.api.dtos;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-public class UsuarioLoginDTO {
-    private String email;
-    private String senha;
-}
-
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UsuarioResponseDTO {
-    private Long id;
-    private String nome;
+public class UsuarioLoginDTO {
+
+    @NotBlank(message = "O e-mail é obrigatório")
+    @Email(message = "Formato de e-mail inválido")
     private String email;
-    private String token; // nulo nas consultas simples de me/perfil
+
+    @NotBlank(message = "A senha é obrigatória")
+    private String senha;
 }

@@ -5,17 +5,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-public class UsuarioLoginDTO {
-    private String email;
-    private String senha;
-}
-
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class UsuarioResponseDTO {
     private Long id;
     private String nome;
     private String email;
-    private String token; // nulo nas consultas simples de me/perfil
+    private String token;
 }
