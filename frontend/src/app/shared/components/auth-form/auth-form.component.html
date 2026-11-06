@@ -22,9 +22,6 @@
     <p class="intro">
       {{ registerMode() ? 'Preencha seus dados para começar.' : 'Entre para acessar seu perfil e seus agendamentos.' }}
     </p>
-    @if (registered && !registerMode()) {
-      <p class="success" role="status">Cadastro concluído. Entre com seu e-mail e senha.</p>
-    }
     @if (error()) {
       <p class="error-message" role="alert">{{ error() }}</p>
     }
@@ -90,7 +87,9 @@
               </li>
             }
           </ul>
-          <span class="sr-only" role="status">{{ requirementsMet() }} de 5 requisitos atendidos.</span>
+          <span class="sr-only" role="status"
+            >{{ requirementsMet() }} de {{ passwordRequirements().length }} requisitos atendidos.</span
+          >
         } @else {
           <span id="password-help"></span>
         }

@@ -6,6 +6,7 @@ import {
   MenuController,
   IonContent,
   IonHeader,
+  IonFooter,
   IonItem,
   IonIcon,
   IonLabel,
@@ -18,7 +19,14 @@ import {
   IonToolbar,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { homeOutline, peopleOutline, calendarOutline, informationCircleOutline, personOutline } from 'ionicons/icons';
+import {
+  homeOutline,
+  peopleOutline,
+  calendarOutline,
+  informationCircleOutline,
+  personOutline,
+  logOutOutline,
+} from 'ionicons/icons';
 
 import { AuthService } from './core/services/auth.service';
 import { SidebarService } from './core/services/sidebar.service';
@@ -34,6 +42,7 @@ import { SidebarService } from './core/services/sidebar.service';
     IonApp,
     IonContent,
     IonHeader,
+    IonFooter,
     IonItem,
     IonIcon,
     IonLabel,
@@ -89,8 +98,8 @@ export class AppComponent {
   }
 
   private menuLinks(menu: HTMLElement): HTMLElement[] {
-    return Array.from(menu.querySelectorAll('ion-item'))
-      .map((item) => item.shadowRoot?.querySelector<HTMLElement>('a, button'))
+    return Array.from(menu.querySelectorAll<HTMLElement>('ion-item, .logout-button'))
+      .map((item) => (item.matches('.logout-button') ? item : item.shadowRoot?.querySelector<HTMLElement>('a, button')))
       .filter((item): item is HTMLElement => !!item);
   }
 
@@ -119,6 +128,6 @@ export class AppComponent {
   }
   constructor() {
     void this.auth.restore();
-    addIcons({ homeOutline, peopleOutline, calendarOutline, informationCircleOutline, personOutline });
+    addIcons({ homeOutline, peopleOutline, calendarOutline, informationCircleOutline, personOutline, logOutOutline });
   }
 }

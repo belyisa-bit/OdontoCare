@@ -8,6 +8,7 @@ import { arrowBackOutline, arrowForwardOutline, eyeOutline, eyeOffOutline, lockC
 
 import { safeReturnUrl } from '../../../core/guards/auth.guard';
 import { AuthService } from '../../../core/services/auth.service';
+import { AuthApiError } from '../../../core/services/http-auth.gateway';
 
 @Component({
   selector: 'app-auth-form',
@@ -25,8 +26,9 @@ export class AuthFormComponent {
   readonly busy = signal(false);
   readonly submitted = signal(false);
   readonly error = signal('');
-  readonly returnUrl = safeReturnUrl(this.route.snapshot.queryParamMap.get('returnUrl'));
-  readonly registered = this.route.snapshot.queryParamMap.get('cadastro') === 'concluido';
+  readonly returnUrl = this.route.snapshot.queryParamMap.has('returnUrl')
+    ? safeReturnUrl(this.route.snapshot.queryParamMap.get('returnUrl'))
+    : '/home';
   readonly form = this.builder.nonNullable.group({
     nome: ['', [Validators.maxLength(100)]],
     email: ['', [Validators.required, Validators.email, Validators.maxLength(254)]],
@@ -39,10 +41,11 @@ export class AuthFormComponent {
     const value = this.password();
     return [
       { label: 'De 8 a 128 caracteres', met: value.length >= 8 && value.length <= 128 },
-      { label: 'Uma letra maiúscula', met: /\p{Lu}/u.test(value) },
-      { label: 'Uma letra minúscula', met: /\p{Ll}/u.test(value) },
-      { label: 'Um número', met: /\p{N}/u.test(value) },
-      { label: 'Um símbolo (ex.: @, ! ou #)', met: /[^\p{L}\p{N}\s]/u.test(value) },
+      { label: 'Uma letra maiúscula', met: /[A-Z]/.test(value) },
+      { label: 'Uma letra minúscula', met: /[a-z]/.test(value) },
+      { label: 'Um número', met: /[0-9]/.test(value) },
+      { label: 'Um símbolo permitido: @ $ ! % * ? &', met: /[@$!%*?&]/.test(value) },
+      { label: 'Somente letras sem acento, números e os símbolos acima', met: /^[A-Za-z0-9@$!%*?&]+$/.test(value) },
     ];
   });
   readonly requirementsMet = computed(() => this.passwordRequirements().filter((rule) => rule.met).length);
@@ -76,23 +79,25 @@ export class AuthFormComponent {
       if (this.registerMode()) {
         await this.auth.register({ nome: nome.trim(), email: email.trim(), senha });
         this.form.reset();
-        await this.router.navigate(['/login'], { queryParams: { returnUrl: this.returnUrl, cadastro: 'concluido' } });
+        await this.router.navigateByUrl(this.returnUrl, { replaceUrl: true });
       } else {
         await this.auth.login({ email: email.trim(), senha });
         this.form.reset();
         await this.router.navigateByUrl(this.returnUrl, { replaceUrl: true });
       }
-    } catch {
+    } catch (error) {
       this.form.controls.senha.reset();
       this.form.controls.confirmacao.reset();
       this.error.set(
-        this.auth.available
-          ? this.registerMode()
-            ? 'Não foi possível criar a conta. Confira os dados e tente novamente.'
-            : 'Não foi possível entrar. Confira suas credenciais e tente novamente.'
-          : this.registerMode()
-            ? 'Cadastro temporariamente indisponível. Tente novamente mais tarde.'
-            : 'Acesso temporariamente indisponível. Tente novamente mais tarde.',
+        error instanceof AuthApiError
+          ? error.message
+          : this.auth.available
+            ? this.registerMode()
+              ? 'Não foi possível criar a conta. Confira os dados e tente novamente.'
+              : 'Não foi possível entrar. Confira suas credenciais e tente novamente.'
+            : this.registerMode()
+              ? 'Cadastro temporariamente indisponível. Tente novamente mais tarde.'
+              : 'Acesso temporariamente indisponível. Tente novamente mais tarde.',
       );
     } finally {
       this.busy.set(false);

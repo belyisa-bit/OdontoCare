@@ -19,3 +19,15 @@ ion-menu ion-item:focus-visible { outline: 2px solid #239ee7; outline-offset: 2p
 .menu-footer svg { position: absolute; width: 85px; height: 95px; bottom: 70px; right: 26px; fill: none; stroke: #c2e4fc; stroke-width: 2.5; }
 .menu-footer::before { content: ''; position: absolute; bottom: -80px; left: -65px; width: 400px; height: 150px; border-radius: 50%; background: #c2e6ff; transform: rotate(12deg); }
 .menu-footer span { position: relative; }
+.menu-account-footer { background: #eef7ff; padding: 14px 18px calc(16px + env(safe-area-inset-bottom)); border-top: 1px solid #d7e8f6; }
+.menu-account-footer ion-menu-toggle { display: block; }
+.logout-button { display: flex; align-items: center; width: 100%; gap: 12px; min-height: 62px; padding: 10px 14px; border: 1px solid #d3e5f4; border-radius: 18px; background: #ffffffc9; color: #244864; text-align: left; font: inherit; cursor: pointer; transition: background .15s, border-color .15s; }
+.logout-icon { display: grid; place-items: center; flex-shrink: 0; width: 38px; height: 38px; border-radius: 13px; color: #1689c6; background: #e5f3ff; }
+.logout-icon ion-icon { font-size: 25px; }
+.logout-copy { display: grid; gap: 3px; }
+.logout-copy strong { font-size: 14px; font-weight: 650; }
+.logout-copy small { font-size: 11px; color: #617d92; }
+.logout-button:hover { background: #e0f1ff; border-color: #9ecde9; }
+.logout-button:active { background: #d1e9fc; }
+.logout-button:focus-visible { outline: 3px solid #169ee8; outline-offset: 3px; }
+@media(prefers-reduced-motion: reduce) { .logout-button { transition: none; } }

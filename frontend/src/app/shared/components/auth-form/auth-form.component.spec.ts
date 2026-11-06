@@ -18,16 +18,23 @@ describe('Senha do cadastro', () => {
     return fixture.componentInstance;
   }
 
-  it.each(['abc123!x', 'ABC123!X', 'Abcdefg!', 'Abcdef12', 'Ab1!', 'Abcdef1 ', 'Aa1!' + 'x'.repeat(125)])(
-    'recusa senha sem todos os requisitos: %s',
-    async (senha) => {
-      const component = await setup();
-      component.form.controls.senha.setValue(senha);
-      expect(component.invalid('senha')).toBe(true);
-    },
-  );
+  it.each([
+    'abc123!x',
+    'ABC123!X',
+    'Abcdefg!',
+    'Abcdef12',
+    'Ab1!',
+    'Abcdef1 ',
+    'Árvore!123',
+    'Abcdef1#',
+    'Aa1!' + 'x'.repeat(125),
+  ])('recusa senha sem todos os requisitos: %s', async (senha) => {
+    const component = await setup();
+    component.form.controls.senha.setValue(senha);
+    expect(component.invalid('senha')).toBe(true);
+  });
 
-  it.each(['Sorriso@2026', 'Árvore!123', 'Abcde1!x'])('aceita senha com todos os requisitos: %s', async (senha) => {
+  it.each(['Sorriso@2026', 'Arvore!123', 'Abcde1!x'])('aceita senha com todos os requisitos: %s', async (senha) => {
     const component = await setup();
     component.form.controls.senha.setValue(senha);
     expect(component.invalid('senha')).toBe(false);

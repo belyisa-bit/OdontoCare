@@ -16,7 +16,7 @@ export interface Registration extends LoginCredentials {
 export interface AuthGateway {
   session(): Promise<AuthUser | null>;
   login(credentials: LoginCredentials): Promise<AuthUser>;
-  register(details: Registration): Promise<void>;
+  register(details: Registration): Promise<AuthUser>;
   logout(): Promise<void>;
 }
 export const AUTH_GATEWAY = new InjectionToken<AuthGateway>('AUTH_GATEWAY');

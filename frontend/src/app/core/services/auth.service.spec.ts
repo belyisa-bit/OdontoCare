@@ -14,7 +14,7 @@ function setup() {
   const gateway = {
     session: vi.fn<AuthGateway['session']>().mockResolvedValue(null),
     login: vi.fn<AuthGateway['login']>().mockResolvedValue(user),
-    register: vi.fn<AuthGateway['register']>().mockResolvedValue(undefined),
+    register: vi.fn<AuthGateway['register']>().mockResolvedValue(user),
     logout: vi.fn<AuthGateway['logout']>().mockResolvedValue(undefined),
   };
   TestBed.configureTestingModule({ providers: [provideRouter([]), { provide: AUTH_GATEWAY, useValue: gateway }] });
@@ -36,6 +36,7 @@ describe('Autenticação', () => {
     const { auth, gateway } = setup();
     await auth.login({ email: user.email, senha: 'senha-exemplo' });
     expect(auth.user()).toEqual(user);
+    gateway.session.mockResolvedValue(user);
     expect(TestBed.inject(NotificationsService).signedIn()).toBe(true);
     expect(
       await TestBed.runInInjectionContext(() =>
@@ -60,11 +61,11 @@ describe('Autenticação', () => {
     expect(gateway.session).toHaveBeenCalledOnce();
     expect(auth.signedIn()).toBe(true);
   });
-  it('cadastro não cria uma sessão automaticamente', async () => {
+  it('cadastro confirmado inicia a sessão automaticamente', async () => {
     const { auth, gateway } = setup();
     await auth.register({ ...user, senha: 'senha-exemplo' });
     expect(gateway.register).toHaveBeenCalledOnce();
-    expect(auth.signedIn()).toBe(false);
+    expect(auth.signedIn()).toBe(true);
   });
   it('sem integração, falha explicitamente e não cria login fictício', async () => {
     TestBed.configureTestingModule({ providers: [provideRouter([])] });

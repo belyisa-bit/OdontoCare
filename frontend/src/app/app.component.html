@@ -51,12 +51,6 @@
                 <ion-icon slot="start" name="person-outline" aria-hidden="true"></ion-icon>
                 <ion-label>Perfil</ion-label>
               </ion-item>
-              @if (auth.signedIn()) {
-                <ion-item [button]="true" [detail]="false" (click)="logout()">
-                  <ion-icon slot="start" name="person-outline" aria-hidden="true"></ion-icon>
-                  <ion-label>Sair da conta</ion-label>
-                </ion-item>
-              }
             </ion-menu-toggle>
           </ion-list>
         </nav>
@@ -67,6 +61,16 @@
           <span>Um novo motivo para sorrir.</span>
         </div>
       </ion-content>
+      @if (auth.signedIn()) {
+        <ion-footer class="menu-account-footer ion-no-border">
+          <ion-menu-toggle [autoHide]="false">
+            <button class="logout-button" type="button" (click)="logout()" aria-label="Logout — Sair da conta">
+              <span class="logout-icon"><ion-icon name="log-out-outline" aria-hidden="true"></ion-icon></span>
+              <span class="logout-copy"><strong>Logout</strong><small>Sair da conta</small></span>
+            </button>
+          </ion-menu-toggle>
+        </ion-footer>
+      }
     </ion-menu>
     <ion-router-outlet id="main-content"></ion-router-outlet>
   </ion-split-pane>
