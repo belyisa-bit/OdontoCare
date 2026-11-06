@@ -1,6 +1,13 @@
 # Java build output
 /backend/target/
 
+# Local H2 database files (never version accounts or password hashes).
+/backend/data/
+/data/
+*.mv.db
+*.trace.db
+*.lock.db
+
 # Local system files
 .DS_Store
 Thumbs.db
