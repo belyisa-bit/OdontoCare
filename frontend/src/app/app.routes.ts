@@ -1,5 +1,7 @@
 import type { Routes } from '@angular/router';
 
+import { authGuard } from './core/guards/auth.guard';
+
 export const routes: Routes = [
   {
     path: '',
@@ -16,10 +18,12 @@ export const routes: Routes = [
   },
   {
     path: 'dentistas/:id',
+    canActivate: [authGuard],
     loadComponent: () => import('./pages/detalhes/detalhes.page').then((m) => m.DetalhesPage),
   },
   {
     path: 'agendamentos',
+    canActivate: [authGuard],
     loadComponent: () => import('./pages/agendamentos/agendamentos.page').then((m) => m.AgendamentosPage),
   },
   {
@@ -28,7 +32,16 @@ export const routes: Routes = [
   },
   {
     path: 'perfil',
+    canActivate: [authGuard],
     loadComponent: () => import('./pages/perfil/perfil.page').then((m) => m.PerfilPage),
+  },
+  {
+    path: 'login',
+    loadComponent: () => import('./pages/login/login.page').then((m) => m.LoginPage),
+  },
+  {
+    path: 'cadastro',
+    loadComponent: () => import('./pages/cadastro/cadastro.page').then((m) => m.CadastroPage),
   },
   {
     path: '**',

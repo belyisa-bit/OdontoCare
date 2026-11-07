@@ -15,7 +15,7 @@ test('seleção da Home filtra dentistas e busca sem acentos funciona', async ({
   await search.fill('andre clinico');
   await expect(page.locator('.dentist-card')).toHaveCount(1);
   await page.locator('.dentist-card').click();
-  await expect(page).toHaveURL(/\/dentistas\/12$/);
+  await expect(page).toHaveURL(/\/login\?returnUrl=%2Fdentistas%2F12$/);
 });
 
 test('filtro direto na URL, sem resultados e limpeza', async ({ page }) => {
