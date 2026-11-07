@@ -5,6 +5,9 @@ import com.clinicaodonto.api.dtos.AgendamentoDTO;
 import com.clinicaodonto.api.models.Agendamento;
 import com.clinicaodonto.api.repositories.AgendamentoRepository;
 import com.clinicaodonto.api.repositories.DentistaRepository;
+import com.clinicaodonto.api.repositories.UsuarioRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,20 +18,32 @@ public class AgendamentoService {
 
     private final AgendamentoRepository agendamentoRepository;
     private final DentistaRepository dentistaRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    public AgendamentoService(AgendamentoRepository agendamentoRepository, DentistaRepository dentistaRepository) {
+    public AgendamentoService(AgendamentoRepository agendamentoRepository, DentistaRepository dentistaRepository,
+                              UsuarioRepository usuarioRepository) {
         this.agendamentoRepository = agendamentoRepository;
         this.dentistaRepository = dentistaRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
-    public List<AgendamentoDTO> listarTodos() {
-        return agendamentoRepository.findAll().stream()
+    public List<AgendamentoDTO> listarPorUsuarioAutenticado(String emailUsuario) {
+        return agendamentoRepository.findByUsuarioEmailOrderByDataHoraAsc(emailUsuario).stream()
+            .map(this::toDTO)
+            .collect(Collectors.toList());
+    }
+
+    public AgendamentoDTO obterDoUsuario(Long id, String emailUsuario) {
+        return agendamentoRepository.findByIdAndUsuarioEmail(id, emailUsuario)
                 .map(this::toDTO)
-                .collect(Collectors.toList());
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Agendamento não encontrado"));
     }
 
-    public AgendamentoDTO criar(AgendamentoCreateDTO dto) {
+    public AgendamentoDTO criar(AgendamentoCreateDTO dto, String emailUsuario) {
         Agendamento agendamento = new Agendamento();
+        agendamento.setUsuario(usuarioRepository.findByEmail(emailUsuario)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED,
+                        "Usuário autenticado não encontrado")));
         agendamento.setNomePaciente(dto.getNomePaciente());
         agendamento.setCpfPaciente(dto.getCpfPaciente());
         agendamento.setTelefonePaciente(dto.getTelefonePaciente());

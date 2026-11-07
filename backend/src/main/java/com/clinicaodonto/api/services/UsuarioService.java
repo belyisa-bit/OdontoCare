@@ -3,6 +3,7 @@ package com.clinicaodonto.api.services;
 import com.clinicaodonto.api.dtos.UsuarioLoginDTO;
 import com.clinicaodonto.api.dtos.UsuarioRegisterDTO;
 import com.clinicaodonto.api.dtos.UsuarioResponseDTO;
+import com.clinicaodonto.api.exceptions.EmailDuplicadoException;
 import com.clinicaodonto.api.models.Usuario;
 import com.clinicaodonto.api.repositories.UsuarioRepository;
 import org.springframework.http.HttpStatus;
@@ -17,24 +18,21 @@ public class UsuarioService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-    public UsuarioService(UsuarioRepository usuarioRepository,
-                          PasswordEncoder passwordEncoder,
-                          JwtService jwtService) {
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
     }
 
     public UsuarioResponseDTO registrar(UsuarioRegisterDTO dto) {
-        if (usuarioRepository.existsByEmail(dto.getEmail().trim().toLowerCase())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "E-mail já cadastrado");
+        String email = dto.getEmail().trim().toLowerCase();
+        if (usuarioRepository.existsByEmail(email)) {
+            throw new EmailDuplicadoException("E-mail já cadastrado");
         }
-
         Usuario usuario = new Usuario();
         usuario.setNome(dto.getNome().trim());
-        usuario.setEmail(dto.getEmail().trim().toLowerCase());
+        usuario.setEmail(email);
         usuario.setSenha(passwordEncoder.encode(dto.getSenha()));
-
         Usuario salvo = usuarioRepository.save(usuario);
         return toResponse(salvo, jwtService.generateToken(salvo));
     }
@@ -42,11 +40,9 @@ public class UsuarioService {
     public UsuarioResponseDTO autenticar(UsuarioLoginDTO dto) {
         Usuario usuario = usuarioRepository.findByEmail(dto.getEmail().trim().toLowerCase())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciais inválidas"));
-
         if (!passwordEncoder.matches(dto.getSenha(), usuario.getSenha())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciais inválidas");
         }
-
         return toResponse(usuario, jwtService.generateToken(usuario));
     }
 

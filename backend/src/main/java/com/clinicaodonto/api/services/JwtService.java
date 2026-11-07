@@ -17,7 +17,7 @@ import java.util.Map;
 @Service
 public class JwtService {
 
-    @Value("${jwt.secret:clinica-odonto-secret-key-para-jwt-2026}")
+    @Value("${jwt.secret}")
     private String secretKey;
 
     @Value("${jwt.expiration:3600000}")
