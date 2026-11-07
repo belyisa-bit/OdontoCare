@@ -21,11 +21,11 @@ public class AgendamentoService {
         this.dentistaRepository = dentistaRepository;
     }
 
-    public List<AgendamentoDTO> listarTodos() {
-        return agendamentoRepository.findAll().stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
-    }
+    public List<AgendamentoDTO> listarPorUsuarioAutenticado(String emailUsuario) {
+    return agendamentoRepository.findByUsuarioEmail(emailUsuario).stream()
+            .map(this::toDTO)
+            .collect(Collectors.toList());
+}
 
     public AgendamentoDTO criar(AgendamentoCreateDTO dto) {
         Agendamento agendamento = new Agendamento();
