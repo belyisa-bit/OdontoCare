@@ -8,8 +8,7 @@ import { SiteFooterComponent } from '../../shared/components/site-footer/site-fo
 @Component({
   selector: 'app-login',
   imports: [AuthFormComponent, PageHeaderComponent, SiteFooterComponent, IonContent, IonHeader],
-  template:
-    '<ion-header class="ion-no-border"><app-page-header></app-page-header></ion-header><ion-content><app-auth-form [registerMode]="false"></app-auth-form><app-site-footer></app-site-footer></ion-content>',
-  styles: 'ion-content { --background: #f2f7ff; }',
+  templateUrl: './login.page.html',
+  styleUrls: ['./login.page.scss'],
 })
 export class LoginPage {}

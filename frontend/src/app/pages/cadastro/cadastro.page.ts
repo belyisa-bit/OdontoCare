@@ -8,8 +8,7 @@ import { SiteFooterComponent } from '../../shared/components/site-footer/site-fo
 @Component({
   selector: 'app-cadastro',
   imports: [AuthFormComponent, PageHeaderComponent, SiteFooterComponent, IonContent, IonHeader],
-  template:
-    '<ion-header class="ion-no-border"><app-page-header></app-page-header></ion-header><ion-content><app-auth-form [registerMode]="true"></app-auth-form><app-site-footer></app-site-footer></ion-content>',
-  styles: 'ion-content { --background: #f2f7ff; }',
+  templateUrl: './cadastro.page.html',
+  styleUrls: ['./cadastro.page.scss'],
 })
 export class CadastroPage {}

@@ -61,7 +61,23 @@ export class AppComponent {
   readonly sidebar = inject(SidebarService);
   readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly menus = inject(MenuController);
+  private readonly document = inject(DOCUMENT);
+  private menuOpener: HTMLElement | null = null;
   logoutError = '';
+
+  constructor() {
+    inject(AuthTokenStore)
+      .invalidated$.pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        const returnUrl = this.router.url;
+        if (/^\/(?:perfil|agendamentos|dentistas\/[^/?#]+)(?:[?#]|$)/.test(returnUrl)) {
+          void this.router.navigate(['/login'], { queryParams: { returnUrl }, replaceUrl: true });
+        }
+      });
+    void this.auth.restore();
+    addIcons({ homeOutline, peopleOutline, calendarOutline, informationCircleOutline, personOutline, logOutOutline });
+  }
 
   async logout(): Promise<void> {
     this.logoutError = '';
@@ -72,9 +88,6 @@ export class AppComponent {
       this.logoutError = 'Não foi possível sair. Tente novamente.';
     }
   }
-  private readonly menus = inject(MenuController);
-  private readonly document = inject(DOCUMENT);
-  private menuOpener: HTMLElement | null = null;
 
   rememberMenuFocus(): void {
     let active = this.document.activeElement;
@@ -127,17 +140,5 @@ export class AppComponent {
   async closeMenuWithEscape(): Promise<void> {
     const menu = await this.menus.getOpen();
     if (menu) await menu.close();
-  }
-  constructor() {
-    inject(AuthTokenStore)
-      .invalidated$.pipe(takeUntilDestroyed())
-      .subscribe(() => {
-        const returnUrl = this.router.url;
-        if (/^\/(?:perfil|agendamentos|dentistas\/[^/?#]+)(?:[?#]|$)/.test(returnUrl)) {
-          void this.router.navigate(['/login'], { queryParams: { returnUrl }, replaceUrl: true });
-        }
-      });
-    void this.auth.restore();
-    addIcons({ homeOutline, peopleOutline, calendarOutline, informationCircleOutline, personOutline, logOutOutline });
   }
 }

@@ -7,8 +7,8 @@ import { addIcons } from 'ionicons';
 import { arrowBackOutline, arrowForwardOutline, eyeOutline, eyeOffOutline, lockClosedOutline } from 'ionicons/icons';
 
 import { safeReturnUrl } from '../../../core/guards/auth.guard';
+import { AuthApiError } from '../../../core/models/auth-api-error';
 import { AuthService } from '../../../core/services/auth.service';
-import { AuthApiError } from '../../../core/services/http-auth.gateway';
 
 @Component({
   selector: 'app-auth-form',
@@ -90,29 +90,29 @@ export class AuthFormComponent {
     try {
       if (this.registerMode()) {
         await this.auth.register({ nome: nome.trim(), email: email.trim(), senha });
-        this.form.reset();
-        await this.router.navigateByUrl(this.returnUrl(), { replaceUrl: true });
       } else {
         await this.auth.login({ email: email.trim(), senha });
-        this.form.reset();
-        await this.router.navigateByUrl(this.returnUrl(), { replaceUrl: true });
       }
+      this.form.reset();
+      await this.router.navigateByUrl(this.returnUrl(), { replaceUrl: true });
     } catch (error) {
       this.form.controls.senha.reset();
       this.form.controls.confirmacao.reset();
-      this.error.set(
-        error instanceof AuthApiError
-          ? error.message
-          : this.auth.available
-            ? this.registerMode()
-              ? 'Não foi possível criar a conta. Confira os dados e tente novamente.'
-              : 'Não foi possível entrar. Confira suas credenciais e tente novamente.'
-            : this.registerMode()
-              ? 'Cadastro temporariamente indisponível. Tente novamente mais tarde.'
-              : 'Acesso temporariamente indisponível. Tente novamente mais tarde.',
-      );
+      this.error.set(this.errorMessage(error));
     } finally {
       this.busy.set(false);
     }
+  }
+
+  private errorMessage(error: unknown): string {
+    if (error instanceof AuthApiError) return error.message;
+    if (!this.auth.available) {
+      return this.registerMode()
+        ? 'Cadastro temporariamente indisponível. Tente novamente mais tarde.'
+        : 'Acesso temporariamente indisponível. Tente novamente mais tarde.';
+    }
+    return this.registerMode()
+      ? 'Não foi possível criar a conta. Confira os dados e tente novamente.'
+      : 'Não foi possível entrar. Confira suas credenciais e tente novamente.';
   }
 }

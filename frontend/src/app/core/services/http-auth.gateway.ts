@@ -3,18 +3,12 @@ import { inject, Injectable } from '@angular/core';
 import { firstValueFrom, TimeoutError } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
+import { AuthApiError } from '../models/auth-api-error';
 import type { AuthGateway, AuthUser, LoginCredentials, Registration } from '../models/auth.model';
 
 import { AuthTokenStore } from './auth-token.store';
 
-export class AuthApiError extends Error {
-  constructor(
-    readonly status: number,
-    message: string,
-  ) {
-    super(message);
-  }
-}
+const AUTH_REQUEST_TIMEOUT_MS = 15_000;
 
 @Injectable({ providedIn: 'root' })
 export class HttpAuthGateway implements AuthGateway {
@@ -26,7 +20,7 @@ export class HttpAuthGateway implements AuthGateway {
     const token = this.tokens.read();
     if (!token) return null;
     try {
-      const data = await firstValueFrom(this.http.get<unknown>(`${this.url}/me`, { timeout: 15000 }));
+      const data = await firstValueFrom(this.http.get<unknown>(`${this.url}/me`, { timeout: AUTH_REQUEST_TIMEOUT_MS }));
       return this.tokens.read() === token ? this.userFrom(data) : null;
     } catch (error) {
       // Older API versions returned 403 for an invalid JWT on /me.
@@ -53,7 +47,9 @@ export class HttpAuthGateway implements AuthGateway {
   private async authenticate(action: 'login' | 'register', body: LoginCredentials | Registration): Promise<AuthUser> {
     const version = this.tokens.version;
     try {
-      const data = await firstValueFrom(this.http.post<unknown>(`${this.url}/${action}`, body, { timeout: 15000 }));
+      const data = await firstValueFrom(
+        this.http.post<unknown>(`${this.url}/${action}`, body, { timeout: AUTH_REQUEST_TIMEOUT_MS }),
+      );
       const user = this.userFrom(data);
       const token = (data as Record<string, unknown>)['token'];
       if (typeof token !== 'string' || !token.trim()) throw new Error('Resposta de autenticação inválida.');
@@ -84,18 +80,28 @@ export class HttpAuthGateway implements AuthGateway {
   private apiError(error: unknown, registration: boolean): AuthApiError {
     if (error instanceof AuthApiError) return error;
     const status = error instanceof HttpErrorResponse ? error.status : error instanceof TimeoutError ? 0 : -1;
-    const message =
-      status === 0
-        ? 'Não foi possível conectar ao servidor. Confira sua conexão e tente novamente.'
-        : status === 409 && registration
+    let message: string;
+    switch (status) {
+      case 0:
+        message = 'Não foi possível conectar ao servidor. Confira sua conexão e tente novamente.';
+        break;
+      case 409:
+        message = registration
           ? 'Este e-mail já está cadastrado. Entre na sua conta ou use outro e-mail.'
-          : status === 401 || status === 403
-            ? registration
-              ? 'Não foi possível criar a conta. Confira os dados ou tente entrar se já possui cadastro.'
-              : 'E-mail ou senha incorretos.'
-            : status === 400
-              ? 'Confira os dados informados e os requisitos da senha.'
-              : 'Não foi possível concluir a solicitação. Tente novamente mais tarde.';
+          : 'Não foi possível concluir a solicitação. Tente novamente mais tarde.';
+        break;
+      case 401:
+      case 403:
+        message = registration
+          ? 'Não foi possível criar a conta. Confira os dados ou tente entrar se já possui cadastro.'
+          : 'E-mail ou senha incorretos.';
+        break;
+      case 400:
+        message = 'Confira os dados informados e os requisitos da senha.';
+        break;
+      default:
+        message = 'Não foi possível concluir a solicitação. Tente novamente mais tarde.';
+    }
     return new AuthApiError(status, message);
   }
 }
