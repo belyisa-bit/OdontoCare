@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -21,10 +22,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UsuarioDetailsService usuarioDetailsService;
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
-    public JwtAuthenticationFilter(JwtService jwtService, UsuarioDetailsService usuarioDetailsService) {
+    public JwtAuthenticationFilter(JwtService jwtService, UsuarioDetailsService usuarioDetailsService,
+                                   CustomAuthenticationEntryPoint authenticationEntryPoint) {
         this.jwtService = jwtService;
         this.usuarioDetailsService = usuarioDetailsService;
+        this.authenticationEntryPoint = authenticationEntryPoint;
     }
 
     @Override
@@ -36,7 +40,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
 
-            if (jwtService.isTokenValid(token)) {
+            try {
+                if (!jwtService.isTokenValid(token)) {
+                    throw new BadCredentialsException("Token inválido ou expirado");
+                }
                 String email = jwtService.extractUsername(token);
                 UserDetails userDetails = usuarioDetailsService.loadUserByUsername(email);
 
@@ -44,6 +51,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+            } catch (Exception ex) {
+                SecurityContextHolder.clearContext();
+                authenticationEntryPoint.commence(request, response,
+                        new BadCredentialsException("Token inválido ou expirado", ex));
+                return;
             }
         }
 

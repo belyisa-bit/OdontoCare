@@ -9,10 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.security.core.Authentication;
 
 @RestController
 @RequestMapping("/api/agendamentos")
-@CrossOrigin(origins = "*")
 public class AgendamentoController {
 
     private final AgendamentoService agendamentoService;
@@ -22,13 +22,19 @@ public class AgendamentoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AgendamentoDTO>> listarTodos() {
-        return ResponseEntity.ok(agendamentoService.listarTodos());
+    public ResponseEntity<List<AgendamentoDTO>> listarTodos(Authentication authentication) {
+        return ResponseEntity.ok(agendamentoService.listarPorUsuarioAutenticado(authentication.getName()));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<AgendamentoDTO> obter(@PathVariable Long id, Authentication authentication) {
+        return ResponseEntity.ok(agendamentoService.obterDoUsuario(id, authentication.getName()));
     }
 
     @PostMapping
-    public ResponseEntity<AgendamentoDTO> criar(@Valid @RequestBody AgendamentoCreateDTO dto) {
-        AgendamentoDTO novo = agendamentoService.criar(dto);
+    public ResponseEntity<AgendamentoDTO> criar(@Valid @RequestBody AgendamentoCreateDTO dto,
+                                                 Authentication authentication) {
+        AgendamentoDTO novo = agendamentoService.criar(dto, authentication.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(novo);
     }
 }

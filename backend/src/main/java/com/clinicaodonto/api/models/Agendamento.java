@@ -32,6 +32,10 @@ public class Agendamento {
     @JoinColumn(name = "dentista_id")
     private Dentista dentista;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
+
     public Agendamento() {}
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -49,4 +53,6 @@ public class Agendamento {
     public void setStatus(String status) { this.status = status; }
     public Dentista getDentista() { return dentista; }
     public void setDentista(Dentista dentista) { this.dentista = dentista; }
+    public Usuario getUsuario() { return usuario; }
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
 }

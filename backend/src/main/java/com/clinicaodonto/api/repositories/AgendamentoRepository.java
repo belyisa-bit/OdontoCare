@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface AgendamentoRepository extends JpaRepository<Agendamento, Long> {
     List<Agendamento> findByCpfPaciente(String cpfPaciente);
+    List<Agendamento> findByUsuarioEmailOrderByDataHoraAsc(String email);
+    java.util.Optional<Agendamento> findByIdAndUsuarioEmail(Long id, String email);
 }
