@@ -129,7 +129,7 @@
     </form>
     <p class="switch">
       {{ registerMode() ? 'Já tem uma conta?' : 'Ainda não tem conta?' }}
-      <a [routerLink]="registerMode() ? '/login' : '/cadastro'" [queryParams]="{ returnUrl: returnUrl }">{{
+      <a [routerLink]="registerMode() ? '/login' : '/cadastro'" [queryParams]="{ returnUrl: returnUrl() }">{{
         registerMode() ? 'Entrar' : 'Cadastre-se'
       }}</a>
     </p>

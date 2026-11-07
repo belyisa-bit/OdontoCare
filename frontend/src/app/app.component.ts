@@ -1,5 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, HostListener, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import {
   IonApp,
@@ -28,6 +29,7 @@ import {
   logOutOutline,
 } from 'ionicons/icons';
 
+import { AuthTokenStore } from './core/services/auth-token.store';
 import { AuthService } from './core/services/auth.service';
 import { SidebarService } from './core/services/sidebar.service';
 
@@ -127,6 +129,14 @@ export class AppComponent {
     if (menu) await menu.close();
   }
   constructor() {
+    inject(AuthTokenStore)
+      .invalidated$.pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        const returnUrl = this.router.url;
+        if (/^\/(?:perfil|agendamentos|dentistas\/[^/?#]+)(?:[?#]|$)/.test(returnUrl)) {
+          void this.router.navigate(['/login'], { queryParams: { returnUrl }, replaceUrl: true });
+        }
+      });
     void this.auth.restore();
     addIcons({ homeOutline, peopleOutline, calendarOutline, informationCircleOutline, personOutline, logOutOutline });
   }

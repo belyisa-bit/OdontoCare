@@ -116,3 +116,38 @@ test('token expirado não libera página privada após recarregar', async ({ pag
   await expect(page).toHaveURL(/\/login\?returnUrl=%2Fagendamentos$/);
   expect(await page.evaluate(() => localStorage.getItem('odontocare.auth.token'))).toBeNull();
 });
+
+test('logout em outra aba fecha a página privada e limpa a identidade', async ({ page, context }) => {
+  const account = { id: 7, nome: 'Maria Souza', email: 'maria@exemplo.com' };
+  await page.route('**/api/auth/me', (route) => route.fulfill({ json: account }));
+  await page.goto('/home');
+  await page.evaluate(() => localStorage.setItem('odontocare.auth.token', 'shared-token'));
+  await page.goto('/perfil');
+  await expect(page.getByRole('heading', { name: 'Perfil', exact: true })).toBeVisible();
+  const other = await context.newPage();
+  await other.goto('/home');
+  await other.evaluate(() => localStorage.removeItem('odontocare.auth.token'));
+  await expect(page).toHaveURL(/\/login\?returnUrl=%2Fperfil$/);
+  await expect(page.locator('.logout-button')).toHaveCount(0);
+  await expect(page.locator('.menu-intro')).not.toContainText(account.nome);
+  await other.close();
+});
+
+test('login reutilizado respeita o destino mais recente e não retém a senha', async ({ page }) => {
+  const account = { id: 7, nome: 'Maria Souza', email: 'maria@exemplo.com' };
+  await page.route('**/api/auth/login', (route) => route.fulfill({ json: { ...account, token: 'new-token' } }));
+  await page.route('**/api/auth/me', (route) => route.fulfill({ json: account }));
+  await page.goto('/login?returnUrl=%2Fperfil');
+  await page.getByLabel('Senha', { exact: true }).fill('NaoReter@2026');
+  await page.getByRole('link', { name: 'Voltar ao início' }).click();
+  await expect(page).toHaveURL(/\/home$/);
+  await expect(page.locator('app-login')).toHaveClass(/ion-page-hidden/);
+  await page.locator('app-home ion-menu-button').click();
+  await page.locator('ion-menu ion-item[routerLink="/agendamentos"]').click();
+  await expect(page).toHaveURL(/\/login\?returnUrl=%2Fagendamentos$/);
+  await expect(page.locator('app-login:visible input[formControlName="senha"]')).toHaveValue('');
+  await page.locator('app-login:visible input[formControlName="email"]').fill(account.email);
+  await page.locator('app-login:visible input[formControlName="senha"]').fill('Sorriso@2026');
+  await page.getByRole('button', { name: 'Entrar', exact: true }).click();
+  await expect(page).toHaveURL(/\/agendamentos$/);
+});

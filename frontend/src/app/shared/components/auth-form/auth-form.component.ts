@@ -1,7 +1,7 @@
 import { Component, computed, inject, input, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, NavigationStart, Router, RouterLink } from '@angular/router';
 import { IonButton, IonIcon, IonSpinner } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, arrowForwardOutline, eyeOutline, eyeOffOutline, lockClosedOutline } from 'ionicons/icons';
@@ -26,9 +26,12 @@ export class AuthFormComponent {
   readonly busy = signal(false);
   readonly submitted = signal(false);
   readonly error = signal('');
-  readonly returnUrl = this.route.snapshot.queryParamMap.has('returnUrl')
-    ? safeReturnUrl(this.route.snapshot.queryParamMap.get('returnUrl'))
-    : '/home';
+  private readonly queryParams = toSignal(this.route.queryParamMap, {
+    initialValue: this.route.snapshot.queryParamMap,
+  });
+  readonly returnUrl = computed(() =>
+    this.queryParams().has('returnUrl') ? safeReturnUrl(this.queryParams().get('returnUrl')) : '/home',
+  );
   readonly form = this.builder.nonNullable.group({
     nome: ['', [Validators.maxLength(100)]],
     email: ['', [Validators.required, Validators.email, Validators.maxLength(254)]],
@@ -51,6 +54,15 @@ export class AuthFormComponent {
   readonly requirementsMet = computed(() => this.passwordRequirements().filter((rule) => rule.met).length);
 
   constructor() {
+    this.router.events.pipe(takeUntilDestroyed()).subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        this.form.controls.senha.reset();
+        this.form.controls.confirmacao.reset();
+        this.visiblePassword.set(false);
+        this.submitted.set(false);
+        this.error.set('');
+      }
+    });
     addIcons({ arrowBackOutline, arrowForwardOutline, eyeOutline, eyeOffOutline, lockClosedOutline });
   }
 
@@ -79,11 +91,11 @@ export class AuthFormComponent {
       if (this.registerMode()) {
         await this.auth.register({ nome: nome.trim(), email: email.trim(), senha });
         this.form.reset();
-        await this.router.navigateByUrl(this.returnUrl, { replaceUrl: true });
+        await this.router.navigateByUrl(this.returnUrl(), { replaceUrl: true });
       } else {
         await this.auth.login({ email: email.trim(), senha });
         this.form.reset();
-        await this.router.navigateByUrl(this.returnUrl, { replaceUrl: true });
+        await this.router.navigateByUrl(this.returnUrl(), { replaceUrl: true });
       }
     } catch (error) {
       this.form.controls.senha.reset();

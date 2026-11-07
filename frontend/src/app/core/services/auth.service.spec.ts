@@ -79,4 +79,35 @@ describe('Autenticação', () => {
     expect(safeReturnUrl('/dentistas/12')).toBe('/dentistas/12');
     expect(safeReturnUrl('/agendamentos')).toBe('/agendamentos');
   });
+
+  it('uma resposta de sessão atrasada não desfaz o logout', async () => {
+    const { auth, gateway } = setup();
+    let resolve!: (value: typeof user | null) => void;
+    gateway.session.mockReturnValue(new Promise((done) => (resolve = done)));
+    const pending = auth.restore();
+    await auth.logout();
+    resolve(user);
+    await pending;
+    expect(auth.signedIn()).toBe(false);
+  });
+
+  it('uma resposta de login atrasada não reabre uma sessão encerrada', async () => {
+    const { auth, gateway } = setup();
+    await auth.restore();
+    let resolve!: (value: typeof user) => void;
+    gateway.login.mockReturnValue(new Promise((done) => (resolve = done)));
+    const pending = auth.login({ email: user.email, senha: 'Sorriso@2026' });
+    const assertion = expect(pending).rejects.toThrow('Sessão alterada');
+    await Promise.resolve();
+    await auth.logout();
+    resolve(user);
+    await assertion;
+    expect(auth.signedIn()).toBe(false);
+  });
+
+  it('duas verificações simultâneas compartilham a mesma chamada ao servidor', async () => {
+    const { auth, gateway } = setup();
+    await Promise.all([auth.restore(true), auth.restore(true)]);
+    expect(gateway.session).toHaveBeenCalledOnce();
+  });
 });

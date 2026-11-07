@@ -15,6 +15,7 @@ export class AuthService {
   private readonly account = signal<AuthUser | null>(null);
   private restoration?: Promise<void>;
   private requestVersion = 0;
+  private pendingRestoration?: Promise<void>;
   readonly user = this.account.asReadonly();
   readonly signedIn = computed(() => this.account() !== null);
   readonly available = !!this.gateway;
@@ -28,15 +29,25 @@ export class AuthService {
   }
 
   restore(force = false): Promise<void> {
+    if (this.pendingRestoration) return this.pendingRestoration;
     if (force) this.restoration = undefined;
-    return (this.restoration ??= this.restoreSession());
+    if (this.restoration) return this.restoration;
+    const attempt = this.restoreSession();
+    this.pendingRestoration = attempt;
+    void attempt.finally(() => {
+      if (this.pendingRestoration === attempt) this.pendingRestoration = undefined;
+    });
+    return attempt;
   }
 
   private async restoreSession(): Promise<void> {
     const version = this.requestVersion;
     try {
       const user = (await this.gateway?.session()) ?? null;
-      if (version === this.requestVersion) this.setUser(user);
+      if (version === this.requestVersion) {
+        this.setUser(user);
+        this.restoration = Promise.resolve();
+      }
     } catch {
       if (version === this.requestVersion) this.setUser(null);
       this.restoration = undefined;
@@ -46,7 +57,10 @@ export class AuthService {
   async login(credentials: LoginCredentials): Promise<void> {
     await this.restore();
     if (!this.gateway) throw new Error('Acesso temporariamente indisponível.');
-    this.setUser(await this.gateway.login(credentials));
+    const version = this.requestVersion;
+    const user = await this.gateway.login(credentials);
+    if (version !== this.requestVersion) throw new Error('Sessão alterada.');
+    this.setUser(user);
     this.requestVersion++;
     this.restoration = Promise.resolve();
   }
@@ -54,7 +68,10 @@ export class AuthService {
   async register(details: Registration): Promise<void> {
     await this.restore();
     if (!this.gateway) throw new Error('Cadastro temporariamente indisponível.');
-    this.setUser(await this.gateway.register(details));
+    const version = this.requestVersion;
+    const user = await this.gateway.register(details);
+    if (version !== this.requestVersion) throw new Error('Sessão alterada.');
+    this.setUser(user);
     this.requestVersion++;
     this.restoration = Promise.resolve();
   }

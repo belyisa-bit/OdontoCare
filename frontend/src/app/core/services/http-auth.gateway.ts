@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, TimeoutError } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import type { AuthGateway, AuthUser, LoginCredentials, Registration } from '../models/auth.model';
@@ -26,10 +26,10 @@ export class HttpAuthGateway implements AuthGateway {
     const token = this.tokens.read();
     if (!token) return null;
     try {
-      const data = await firstValueFrom(this.http.get<unknown>(`${this.url}/me`));
+      const data = await firstValueFrom(this.http.get<unknown>(`${this.url}/me`, { timeout: 15000 }));
       return this.tokens.read() === token ? this.userFrom(data) : null;
     } catch (error) {
-      // This backend can return 403 instead of 401 for an invalid JWT on /me.
+      // Older API versions returned 403 for an invalid JWT on /me.
       if (error instanceof HttpErrorResponse && (error.status === 401 || error.status === 403)) {
         if (this.tokens.read() === token) this.tokens.clear();
         return null;
@@ -51,11 +51,14 @@ export class HttpAuthGateway implements AuthGateway {
   }
 
   private async authenticate(action: 'login' | 'register', body: LoginCredentials | Registration): Promise<AuthUser> {
+    const version = this.tokens.version;
     try {
-      const data = await firstValueFrom(this.http.post<unknown>(`${this.url}/${action}`, body));
+      const data = await firstValueFrom(this.http.post<unknown>(`${this.url}/${action}`, body, { timeout: 15000 }));
       const user = this.userFrom(data);
       const token = (data as Record<string, unknown>)['token'];
       if (typeof token !== 'string' || !token.trim()) throw new Error('Resposta de autenticação inválida.');
+      if (version !== this.tokens.version)
+        throw new AuthApiError(409, 'A sessão mudou durante a solicitação. Tente entrar novamente.');
       this.tokens.save(token);
       return user;
     } catch (error) {
@@ -80,7 +83,7 @@ export class HttpAuthGateway implements AuthGateway {
 
   private apiError(error: unknown, registration: boolean): AuthApiError {
     if (error instanceof AuthApiError) return error;
-    const status = error instanceof HttpErrorResponse ? error.status : -1;
+    const status = error instanceof HttpErrorResponse ? error.status : error instanceof TimeoutError ? 0 : -1;
     const message =
       status === 0
         ? 'Não foi possível conectar ao servidor. Confira sua conexão e tente novamente.'

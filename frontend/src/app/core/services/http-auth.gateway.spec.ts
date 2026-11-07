@@ -81,4 +81,43 @@ describe('Integração HTTP da autenticação', () => {
     await assertion;
     expect(tokens.read()).toBeNull();
   });
+
+  it('não guarda token de um login que terminou depois de sair da conta', async () => {
+    const pending = gateway.login({ email: account.email, senha: 'Sorriso@2026' });
+    const assertion = expect(pending).rejects.toThrow('sessão mudou');
+    const request = http.expectOne('/api/auth/login');
+    await gateway.logout();
+    request.flush({ ...account, token: 'late-token' });
+    await assertion;
+    expect(tokens.read()).toBeNull();
+  });
+
+  it('troca de conta em outra aba invalida a identidade anterior', () => {
+    tokens.save('account-a');
+    const changed = vi.fn();
+    const subscription = tokens.invalidated$.subscribe(changed);
+    localStorage.setItem(AUTH_TOKEN_KEY, 'account-b');
+    window.dispatchEvent(
+      new StorageEvent('storage', {
+        key: AUTH_TOKEN_KEY,
+        oldValue: 'account-a',
+        newValue: 'account-b',
+        storageArea: localStorage,
+      }),
+    );
+    expect(changed).toHaveBeenCalledOnce();
+    expect(tokens.read()).toBe('account-b');
+    subscription.unsubscribe();
+  });
+
+  it('um 401 de uma requisição antiga não apaga um token mais recente', async () => {
+    tokens.save('old-token');
+    const pending = firstValueFrom(TestBed.inject(HttpClient).get('/api/agendamentos'));
+    const assertion = expect(pending).rejects.toMatchObject({ status: 401 });
+    const request = http.expectOne('/api/agendamentos');
+    tokens.save('new-token');
+    request.flush({}, { status: 401, statusText: 'Unauthorized' });
+    await assertion;
+    expect(tokens.read()).toBe('new-token');
+  });
 });
