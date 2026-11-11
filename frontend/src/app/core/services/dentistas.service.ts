@@ -14,6 +14,11 @@ export class DentistasService {
     }
     return data as Dentista[];
   }
+  /**Adicionado */
+  async buscarPorId(id: number): Promise<Dentista | undefined> {
+  const dentistas = await this.listar();
+  return dentistas.find((dentista) => dentista.id === id);
+}
 
   private isDentista(value: unknown): value is Dentista {
     if (!value || typeof value !== 'object') return false;
