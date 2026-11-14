@@ -1,3 +1,4 @@
+import { Highlight } from '../../shared/directives/highlight/highlight';
 import type { OnInit } from '@angular/core';
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -28,6 +29,7 @@ function normalize(value: string): string {
   imports: [
     PageHeaderComponent,
     SiteFooterComponent,
+    Highlight,
     RouterLink,
     IonButton,
     IonContent,
