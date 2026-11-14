@@ -78,6 +78,7 @@
       @for (dentista of filteredDentists(); track dentista.id) {
       <a
         class="dentist-card"
+        appHighlight
         [routerLink]="['/dentistas', dentista.id]"
         [attr.aria-label]="'Ver detalhes de ' + dentista.nome"
       >
