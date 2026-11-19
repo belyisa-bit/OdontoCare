@@ -1,7 +1,8 @@
-import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader } from '@ionic/angular';
+import { RouterLink } from '@angular/router';
+import { IonButton, IonContent, IonHeader, IonIcon } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import { arrowForwardOutline } from 'ionicons/icons';
 
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { SiteFooterComponent } from '../../shared/components/site-footer/site-footer.component';
@@ -10,6 +11,18 @@ import { SiteFooterComponent } from '../../shared/components/site-footer/site-fo
   selector: 'app-sobre',
   templateUrl: './sobre.page.html',
   styleUrls: ['./sobre.page.scss'],
-  imports: [PageHeaderComponent, SiteFooterComponent, IonContent, IonHeader, CommonModule, FormsModule],
+  imports: [
+    PageHeaderComponent,
+    SiteFooterComponent,
+    RouterLink,
+    IonButton,
+    IonContent,
+    IonHeader,
+    IonIcon,
+  ],
 })
-export class SobrePage {}
+export class SobrePage {
+  constructor() {
+    addIcons({ arrowForwardOutline });
+  }
+}
