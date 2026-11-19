@@ -4,7 +4,12 @@ import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonButton, IonContent, IonHeader, IonIcon, IonSkeletonText } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { arrowBackOutline, calendarOutline, refreshOutline } from 'ionicons/icons';
+import {
+  arrowBackOutline,
+  calendarOutline,
+  personOutline,
+  refreshOutline,
+} from 'ionicons/icons';
 
 import type { Agendamento } from '../../core/models/agendamento.model';
 import { AgendamentosService } from '../../core/services/agendamentos.service';
@@ -36,7 +41,12 @@ export class AgendamentosPage implements OnInit {
   readonly error = signal(false);
 
   constructor() {
-    addIcons({ arrowBackOutline, calendarOutline, refreshOutline });
+    addIcons({
+      arrowBackOutline,
+      calendarOutline,
+      personOutline,
+      refreshOutline,
+    });
   }
 
   ngOnInit(): void {
