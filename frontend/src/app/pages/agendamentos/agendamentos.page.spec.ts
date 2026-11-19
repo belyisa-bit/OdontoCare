@@ -1,6 +1,7 @@
 
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { describe, expect, it, vi } from 'vitest';
 
 import type { Agendamento } from '../../core/models/agendamento.model';
 import { AgendamentosService } from '../../core/services/agendamentos.service';
