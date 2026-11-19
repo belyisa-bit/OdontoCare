@@ -1,8 +1,7 @@
 
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-
 import { environment } from '../../../environments/environment';
 import type { Agendamento } from '../models/agendamento.model';
 
@@ -33,6 +32,21 @@ export class AgendamentosService {
   buscarPorId(id: number): Promise<Agendamento> {
     return firstValueFrom(
       this.http.get<Agendamento>(`${this.url}/${id}`, {
+        timeout: REQUEST_TIMEOUT_MS,
+      }),
+    );
+  }
+
+  horariosOcupados(data: string, dentistaId: number | null): Promise<string[]> {
+    let params = new HttpParams().set('data', data);
+
+    if (dentistaId !== null) {
+      params = params.set('dentistaId', dentistaId);
+    }
+
+    return firstValueFrom(
+      this.http.get<string[]>(`${this.url}/disponibilidade`, {
+        params,
         timeout: REQUEST_TIMEOUT_MS,
       }),
     );
