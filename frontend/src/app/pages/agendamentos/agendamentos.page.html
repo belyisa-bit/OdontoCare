@@ -1,6 +1,82 @@
-<ion-header class="ion-no-border"><app-page-header></app-page-header></ion-header>
 
-<ion-content
-  ><main class="page-content"><h1>Agendamentos</h1></main>
-  <app-site-footer></app-site-footer
-></ion-content>
+<ion-header class="ion-no-border">
+  <app-page-header></app-page-header>
+</ion-header>
+
+<ion-content>
+  <main class="page-content">
+    <section class="page-heading">
+      <div>
+        <p class="eyebrow">SUA JORNADA DE CUIDADO</p>
+        <h1>Meus agendamentos</h1>
+        <p class="subtitle">
+          Acompanhe suas consultas e mantenha seus cuidados em dia.
+        </p>
+      </div>
+
+      <ion-button routerLink="/dentistas" class="new-appointment">
+        <ion-icon name="calendar-outline" slot="start"></ion-icon>
+        Novo agendamento
+      </ion-button>
+    </section>
+
+    @if (loading()) {
+      <section class="appointments-list" aria-label="Carregando agendamentos">
+        @for (item of [1, 2, 3]; track item) {
+          <article class="appointment-card skeleton-card">
+            <ion-skeleton-text animated class="skeleton-line"></ion-skeleton-text>
+            <ion-skeleton-text animated class="skeleton-line short"></ion-skeleton-text>
+            <ion-skeleton-text animated class="skeleton-line"></ion-skeleton-text>
+          </article>
+        }
+      </section>
+    } @else if (error()) {
+      <section class="empty-state">
+        <ion-icon name="refresh-outline"></ion-icon>
+        <h2>Não foi possível carregar seus agendamentos</h2>
+        <p>Verifique sua conexão e tente novamente.</p>
+        <ion-button (click)="loadAgendamentos()">
+          Tentar novamente
+        </ion-button>
+      </section>
+    } @else if (agendamentos().length === 0) {
+      <section class="empty-state">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <h2>Você ainda não tem agendamentos</h2>
+        <p>Que tal marcar sua primeira consulta?</p>
+        <ion-button routerLink="/dentistas">
+          Encontrar dentista
+        </ion-button>
+      </section>
+    } @else {
+      <section class="appointments-list">
+        @for (agendamento of agendamentos(); track agendamento.id) {
+          <article class="appointment-card">
+            <div class="appointment-top">
+              <span class="appointment-label">CONSULTA</span>
+              <span class="status" [class]="'status ' + agendamento.status.toLowerCase()">
+                {{ agendamento.status }}
+              </span>
+            </div>
+
+            <h2>{{ agendamento.tratamento }}</h2>
+
+            <div class="appointment-details">
+              <p>
+                <ion-icon name="calendar-outline"></ion-icon>
+                {{ agendamento.dataHora }}
+              </p>
+
+              <p>
+                <ion-icon name="person-outline"></ion-icon>
+                {{ agendamento.dentista?.nome || 'Dentista não informado' }}
+              </p>
+            </div>
+          </article>
+        }
+      </section>
+    }
+  </main>
+
+  <app-site-footer></app-site-footer>
+</ion-content>
