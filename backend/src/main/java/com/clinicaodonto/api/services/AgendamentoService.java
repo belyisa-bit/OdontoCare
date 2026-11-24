@@ -186,7 +186,8 @@ public class AgendamentoService {
                     dentista.getCro(),
                     dentista.getEspecialidade(),
                     dentista.getTelefone(),
-                    dentista.getEmail()
+                    dentista.getEmail(),
+                    dentista.getFotoUrl()
             ));
         }
 
