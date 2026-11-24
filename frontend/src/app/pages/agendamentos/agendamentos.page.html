@@ -1,0 +1,240 @@
+
+<ion-header class="ion-no-border">
+  <app-page-header></app-page-header>
+</ion-header>
+
+<ion-content>
+  <main class="page-content">
+    <section class="page-heading">
+      <div>
+        <p class="eyebrow">SUA JORNADA DE CUIDADO</p>
+        <h1>Meus agendamentos</h1>
+        <p class="subtitle">
+          Acompanhe suas consultas e mantenha seus cuidados em dia.
+        </p>
+      </div>
+
+      @if (!showForm()) {
+        <ion-button (click)="abrirFormulario()" class="new-appointment">
+          <ion-icon name="calendar-outline" slot="start"></ion-icon>
+          Novo agendamento
+        </ion-button>
+      }
+    </section>
+
+    @if (showForm()) {
+      <section class="form-card">
+        @if (sucesso()) {
+          <div class="success-message" role="status">
+            <ion-icon name="calendar-outline"></ion-icon>
+            <h2>Agendamento realizado!</h2>
+            <p>Seu agendamento foi enviado com sucesso.</p>
+            <ion-button (click)="voltarParaLista()">
+              Ver meus agendamentos
+            </ion-button>
+          </div>
+        } @else {
+          <h2>Novo agendamento</h2>
+          <p>Preencha seus dados e escolha o melhor horário para sua consulta.</p>
+
+          <form [formGroup]="form" (ngSubmit)="salvarAgendamento()">
+            <label for="nomePaciente">Nome completo</label>
+            <input
+              id="nomePaciente"
+              type="text"
+              formControlName="nomePaciente"
+              placeholder="Seu nome completo"
+            />
+            @if (form.controls.nomePaciente.touched && form.controls.nomePaciente.invalid) {
+              <small>Informe seu nome.</small>
+            }
+
+            <label for="cpfPaciente">CPF</label>
+            <input
+              id="cpfPaciente"
+              type="text"
+              maxlength="11"
+              inputmode="numeric"
+              formControlName="cpfPaciente"
+              placeholder="Somente números"
+            />
+            @if (form.controls.cpfPaciente.touched && form.controls.cpfPaciente.invalid) {
+              <small>Informe um CPF com 11 números.</small>
+            }
+
+            <label for="telefonePaciente">Telefone</label>
+            <input
+              id="telefonePaciente"
+              type="tel"
+              formControlName="telefonePaciente"
+              placeholder="(00) 00000-0000"
+            />
+            @if (form.controls.telefonePaciente.touched && form.controls.telefonePaciente.invalid) {
+              <small>Informe seu telefone.</small>
+            }
+
+            <section class="schedule-section">
+              <div class="schedule-heading">
+                <h3>Escolha a data</h3>
+                <p>Selecione o dia da sua consulta.</p>
+              </div>
+
+              <input
+                id="dataConsulta"
+                class="date-picker"
+                type="date"
+                [min]="minDate"
+                [value]="selectedDate()"
+                (change)="alterarData($any($event.target).value)"
+              />
+
+              <div class="schedule-heading slots-heading">
+                <h3>Horários disponíveis</h3>
+                <p>Consultas com duração de 30 minutos.</p>
+              </div>
+
+              <div class="schedule-legend">
+                <span><i class="legend-dot available"></i> Disponível</span>
+                <span><i class="legend-dot unavailable"></i> Indisponível</span>
+                <span><i class="legend-dot selected"></i> Selecionado</span>
+              </div>
+
+              @if (loadingSlots()) {
+                <p class="slots-feedback">Consultando horários...</p>
+              } @else if (availabilityError()) {
+                <p class="slots-error" role="alert">
+                  Não foi possível consultar os horários. Tente novamente.
+                </p>
+                <ion-button
+                  type="button"
+                  fill="outline"
+                  (click)="carregarHorarios()"
+                >
+                  Tentar novamente
+                </ion-button>
+              } @else {
+                <div class="time-slots">
+                  @for (slot of horarios(); track slot.inicio) {
+                    <button
+                      type="button"
+                      class="time-slot"
+                      [class.selected]="form.controls.dataHora.value === selectedDate() + 'T' + slot.inicio + ':00'"
+                      [class.unavailable]="slot.ocupado || slot.passado"
+                      [disabled]="slot.ocupado || slot.passado"
+                      (click)="selecionarHorario(slot.inicio)"
+                    >
+                      <strong>{{ slot.inicio }}</strong>
+                      <span>até {{ slot.fim }}</span>
+                    </button>
+                  }
+                </div>
+              }
+
+              @if (form.controls.dataHora.touched && form.controls.dataHora.invalid) {
+                <small>Selecione um horário para continuar.</small>
+              }
+
+              @if (form.controls.dataHora.value && !availabilityError()) {
+                <p class="selected-time">
+                  Horário escolhido:
+                  <strong>
+                    {{ form.controls.dataHora.value.slice(8, 10) }}/{{ form.controls.dataHora.value.slice(5, 7) }}
+                    às
+                    {{ form.controls.dataHora.value.slice(11, 16) }}
+                  </strong>
+                </p>
+              }
+            </section>
+
+            <label for="tratamento">Tratamento</label>
+            <select id="tratamento" formControlName="tratamento">
+              <option value="">Selecione um tratamento</option>
+              <option value="Avaliação">Avaliação</option>
+              <option value="Limpeza">Limpeza</option>
+              <option value="Clareamento">Clareamento</option>
+              <option value="Restauração">Restauração</option>
+              <option value="Ortodontia">Ortodontia</option>
+              <option value="Tratamento de canal">Tratamento de canal</option>
+              <option value="Extração">Extração</option>
+              <option value="Outro">Outro</option>
+            </select>
+            @if (form.controls.tratamento.touched && form.controls.tratamento.invalid) {
+              <small>Selecione um tratamento.</small>
+            }
+
+            @if (formError()) {
+              <p class="form-error" role="alert">{{ formError() }}</p>
+            }
+
+            <div class="form-actions">
+              <ion-button
+                fill="outline"
+                type="button"
+                (click)="voltarParaLista()"
+              >
+                Cancelar
+              </ion-button>
+              <ion-button
+                type="submit"
+                [disabled]="enviando() || loadingSlots() || availabilityError()"
+              >
+                {{ enviando() ? 'Enviando...' : 'Confirmar agendamento' }}
+              </ion-button>
+            </div>
+          </form>
+        }
+      </section>
+    } @else {
+      @if (loading()) {
+        <section class="appointments-list" aria-label="Carregando agendamentos">
+          @for (item of [1, 2, 3]; track item) {
+            <article class="appointment-card skeleton-card">
+              <ion-skeleton-text animated class="skeleton-line"></ion-skeleton-text>
+              <ion-skeleton-text animated class="skeleton-line short"></ion-skeleton-text>
+              <ion-skeleton-text animated class="skeleton-line"></ion-skeleton-text>
+            </article>
+          }
+        </section>
+      } @else if (error()) {
+        <section class="empty-state">
+          <ion-icon name="refresh-outline"></ion-icon>
+          <h2>Não foi possível carregar seus agendamentos</h2>
+          <p>Verifique sua conexão e tente novamente.</p>
+          <ion-button (click)="loadAgendamentos()">Tentar novamente</ion-button>
+        </section>
+      } @else if (agendamentos().length === 0) {
+        <section class="empty-state">
+          <ion-icon name="calendar-outline"></ion-icon>
+          <h2>Você ainda não tem agendamentos</h2>
+          <p>Que tal marcar sua primeira consulta?</p>
+          <ion-button (click)="abrirFormulario()">Novo agendamento</ion-button>
+        </section>
+      } @else {
+        <section class="appointments-list">
+          @for (agendamento of agendamentos(); track agendamento.id) {
+            <article class="appointment-card">
+              <div class="appointment-top">
+                <span class="appointment-label">CONSULTA</span>
+                <span class="status" [class]="'status ' + agendamento.status.toLowerCase()">
+                  {{ agendamento.status }}
+                </span>
+              </div>
+              <h2>{{ agendamento.tratamento }}</h2>
+              <div class="appointment-details">
+                <p>
+                  <ion-icon name="calendar-outline"></ion-icon>
+                  {{ agendamento.dataHora }}
+                </p>
+                <p>
+                  <ion-icon name="person-outline"></ion-icon>
+                  {{ agendamento.dentista?.nome || 'Dentista não informado' }}
+                </p>
+              </div>
+            </article>
+          }
+        </section>
+      }
+    }
+  </main>
+  <app-site-footer></app-site-footer>
+</ion-content>
