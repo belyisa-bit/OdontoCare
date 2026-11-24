@@ -1,6 +1,124 @@
-<ion-header class="ion-no-border"><app-page-header></app-page-header></ion-header>
-
-<ion-content
-  ><main class="page-content"><h1>Perfil</h1></main>
-  <app-site-footer></app-site-footer
-></ion-content>
+﻿<ion-header class="ion-no-border"><app-page-header></app-page-header></ion-header>
+<ion-content>
+  <main class="profile-page">
+    <header class="page-heading">
+      <span class="eyebrow">SEU ESPAÇO ODONTOCARE</span>
+      <h1>Meu perfil<span>.</span></h1>
+      <p>Seus dados e o cuidado com o seu sorriso, em um só lugar.</p>
+    </header>
+    @if (auth.user(); as user) {
+    <div class="profile-layout">
+      <section class="identity-card" aria-labelledby="identity-title">
+        <div class="identity-cover" aria-hidden="true"></div>
+        <div class="identity-body">
+          <div class="avatar" aria-hidden="true">{{ initials() }}</div>
+          <span class="account-badge">Conta de paciente</span>
+          <h2 id="identity-title">{{ user.nome }}</h2>
+          <p class="identity-email">{{ user.email }}</p>
+          <div class="session-status"><span aria-hidden="true"></span> Você está conectado</div>
+          <a class="primary-link" routerLink="/agendamentos">Meus agendamentos <span aria-hidden="true">→</span></a>
+          <button class="logout-button" type="button" (click)="logout()" [disabled]="leaving()">
+            {{ leaving() ? 'Saindo…' : 'Sair da conta' }}
+          </button>
+        </div>
+      </section>
+      <div class="profile-details">
+        <section class="details-card" aria-labelledby="data-title">
+          <span class="eyebrow">SUA CONTA</span>
+          <h2 id="data-title">Informações pessoais</h2>
+          <p class="section-description">Dados informados no seu cadastro.</p>
+          @if (!editing()) {
+          <button class="edit-profile" type="button" (click)="edit()">Editar dados</button>
+          } @if (message()) {
+          <p class="save-message" role="status">{{ message() }}</p>
+          } @if (error()) {
+          <p class="form-error" role="alert">{{ error() }}</p>
+          } @if (editing()) {
+          <form class="profile-form" [formGroup]="form" (ngSubmit)="save()">
+            <label for="profile-cpf">CPF</label
+            ><input
+              id="profile-cpf"
+              type="text"
+              inputmode="numeric"
+              maxlength="14"
+              formControlName="cpf"
+              placeholder="000.000.000-00"
+            /><label for="profile-phone">Telefone com DDD</label>
+            <input
+              id="profile-phone"
+              type="tel"
+              autocomplete="tel"
+              formControlName="telefone"
+              placeholder="(11) 99999-9999"
+            />
+            <label for="profile-birth">Data de nascimento</label>
+            <input id="profile-birth" type="date" autocomplete="bday" formControlName="dataNascimento" [max]="today" />
+            <div class="form-actions">
+              <button class="edit-profile" type="submit" [disabled]="saving()">
+                {{ saving() ? 'Salvando…' : 'Salvar dados' }}
+              </button>
+              <button
+                class="cancel-edit"
+                type="button"
+                (click)="editing.set(false); error.set('')"
+                [disabled]="saving()"
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
+          }
+          <dl class="personal-data">
+            <div>
+              <dt>Nome completo</dt>
+              <dd>{{ user.nome }}</dd>
+            </div>
+            <div>
+              <dt>E-mail</dt>
+              <dd>{{ user.email }}</dd>
+            </div>
+          </dl>
+          @if (!editing()) {
+          <dl class="personal-data extra-data">
+            <div>
+              <dt>CPF</dt>
+              <dd>{{ (user.cpf | cpf) || 'Não informado' }}</dd>
+            </div>
+            <div>
+              <dt>Telefone</dt>
+              <dd>{{ (user.telefone | telefone) || 'Não informado' }}</dd>
+            </div>
+            <div>
+              <dt>Data de nascimento</dt>
+              <dd>{{ (user.dataNascimento | date: 'dd/MM/yyyy') || 'Não informada' }}</dd>
+            </div>
+          </dl>
+          }
+        </section>
+        <section class="quick-access" aria-labelledby="access-title">
+          <h2 id="access-title">Cuide do seu próximo sorriso</h2>
+          <a class="action-card" routerLink="/agendamentos">
+            <span class="icon-box" aria-hidden="true">01</span>
+            <span class="action-copy"
+              ><strong>Suas consultas</strong><span>Confira seus agendamentos ou marque uma consulta.</span></span
+            >
+            <span class="arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="action-card" routerLink="/dentistas">
+            <span class="icon-box mint" aria-hidden="true">02</span>
+            <span class="action-copy"
+              ><strong>Encontre seu dentista</strong><span>Conheça os profissionais e suas especialidades.</span></span
+            >
+            <span class="arrow" aria-hidden="true">→</span>
+          </a>
+        </section>
+        <aside class="security-note">
+          <strong>Uma conta só sua</strong>
+          <p>Ao usar um dispositivo compartilhado, lembre-se de sair da conta quando terminar.</p>
+        </aside>
+      </div>
+    </div>
+    }
+  </main>
+  <app-site-footer></app-site-footer>
+</ion-content>

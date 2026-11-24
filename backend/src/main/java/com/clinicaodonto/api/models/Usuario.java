@@ -23,4 +23,7 @@ public class Usuario {
 
     @Column(nullable = false)
     private String senha;
+    private String telefone;
+    private String cpf;
+    private java.time.LocalDate dataNascimento;
 }

@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+﻿import { expect, test } from '@playwright/test';
 
 test('páginas privadas pedem login e preservam o destino ao alternar para cadastro', async ({ page }) => {
   for (const destination of ['/dentistas/1', '/agendamentos', '/perfil']) {
@@ -76,9 +76,9 @@ test('login real via contrato HTTP preserva destino, restaura sessão e sai loca
   await page.getByRole('button', { name: 'Entrar', exact: true }).click();
   await expect(page).toHaveURL(/\/perfil$/);
   await page.reload();
-  await expect(page.getByRole('heading', { name: 'Perfil', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Meu perfil.', exact: true })).toBeVisible();
   await page.locator('ion-menu-button:visible').click();
-  await page.getByText('Sair da conta', { exact: true }).click();
+  await page.getByRole('button', { name: 'Logout — Sair da conta', exact: true }).click();
   await expect(page).toHaveURL(/\/login$/);
   expect(await page.evaluate(() => localStorage.getItem('odontocare.auth.token'))).toBeNull();
 });
@@ -123,7 +123,7 @@ test('logout em outra aba fecha a página privada e limpa a identidade', async (
   await page.goto('/home');
   await page.evaluate(() => localStorage.setItem('odontocare.auth.token', 'shared-token'));
   await page.goto('/perfil');
-  await expect(page.getByRole('heading', { name: 'Perfil', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Meu perfil.', exact: true })).toBeVisible();
   const other = await context.newPage();
   await other.goto('/home');
   await other.evaluate(() => localStorage.removeItem('odontocare.auth.token'));

@@ -1,49 +1,35 @@
-<ion-header class="ion-no-border">
+﻿<ion-header class="ion-no-border">
   <app-page-header></app-page-header>
 </ion-header>
 
 <ion-content>
   <main class="page-content">
-
-    <a class="back-link" routerLink="/dentistas">
-      ← Voltar para dentistas
-    </a>
+    <a class="back-link" routerLink="/dentistas"> ← Voltar para dentistas </a>
 
     <h1>Detalhes do dentista</h1>
 
     @if (loading()) {
     <p role="status">Carregando informações do profissional...</p>
-    }
-
-    @else if (error()) {
+    } @else if (error()) {
     <section class="state-message" role="alert">
       <h2>Não foi possível carregar os dados</h2>
       <p>Verifique sua conexão e tente novamente.</p>
-      <button type="button" (click)="carregarDentista()">
-        Tentar novamente
-      </button>
+      <button type="button" (click)="carregarDentista()">Tentar novamente</button>
     </section>
-    }
-
-    @else if (notFound()) {
+    } @else if (notFound()) {
     <section class="state-message">
       <h2>Dentista não encontrado</h2>
       <p>O profissional solicitado não foi localizado.</p>
       <a routerLink="/dentistas">Ver todos os dentistas</a>
     </section>
-    }
-
-    @else if (dentista(); as profissional) {
+    } @else if (dentista(); as profissional) {
     <section class="dentist-card">
-
       @if (profissional.fotoUrl) {
       <img class="dentist-photo" [src]="profissional.fotoUrl" [alt]="'Foto de ' + profissional.nome" />
       }
 
       <div class="dentist-info">
-        <span class="specialty">
-          {{ profissional.especialidade }}
-        </span>
+        <span class="specialty"> {{ profissional.especialidade }} </span>
 
         <h2>{{ profissional.nome }}</h2>
 
@@ -54,7 +40,7 @@
 
         <div class="detail-item">
           <strong>Telefone:</strong>
-          <span>{{ profissional.telefone || 'Não informado' }}</span>
+          <span>{{ (profissional.telefone | telefone) || 'Não informado' }}</span>
         </div>
 
         <div class="detail-item">
@@ -62,10 +48,8 @@
           <span>{{ profissional.email || 'Não informado' }}</span>
         </div>
       </div>
-
     </section>
     }
-
   </main>
 
   <app-site-footer></app-site-footer>

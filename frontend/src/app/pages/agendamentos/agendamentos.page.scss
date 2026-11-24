@@ -12,6 +12,31 @@ ion-content {
   padding: 40px 28px;
 }
 
+.back-profile {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-bottom: 20px;
+  padding: 8px 14px;
+  border: 1px solid #d7e5f5;
+  border-radius: 10px;
+  background: white;
+  color: #24558b;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.back-profile:hover {
+  background: #eaf5ff;
+}
+
+.back-profile:focus-visible {
+  outline: 3px solid #147fac;
+  outline-offset: 3px;
+}
+
 .page-heading {
   display: flex;
   align-items: center;

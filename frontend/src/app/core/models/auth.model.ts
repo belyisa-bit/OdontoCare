@@ -1,9 +1,12 @@
-import { InjectionToken } from '@angular/core';
+﻿import { InjectionToken } from '@angular/core';
 
 export interface AuthUser {
   id: string;
   nome: string;
   email: string;
+  telefone?: string;
+  cpf?: string;
+  dataNascimento?: string;
 }
 export interface LoginCredentials {
   email: string;
@@ -18,5 +21,6 @@ export interface AuthGateway {
   login(credentials: LoginCredentials): Promise<AuthUser>;
   register(details: Registration): Promise<AuthUser>;
   logout(): Promise<void>;
+  updateProfile?(details: { telefone: string; cpf: string; dataNascimento: string | null }): Promise<AuthUser>;
 }
 export const AUTH_GATEWAY = new InjectionToken<AuthGateway>('AUTH_GATEWAY');
