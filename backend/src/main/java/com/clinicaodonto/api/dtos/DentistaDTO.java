@@ -14,4 +14,5 @@ public class DentistaDTO {
     private String especialidade;
     private String telefone;
     private String email;
+    private String fotoUrl;
 }

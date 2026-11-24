@@ -14,13 +14,13 @@ Garantir que o OdontoCare funcione conforme os requisitos (autenticação, agend
 - Cadastro, login e sessão do usuário (token JWT)
 - Proteção das rotas privadas (API e front-end)
 - Criação, listagem e consulta de agendamentos, incluindo regras de horário
-- Listagem, filtro e busca de dentistas no front-end
+- Listagem, filtro e busca de dentistas via API e banco de dados
 - Navegação, menu responsivo e lembretes
 
 **Não será testado**
 - Desempenho e carga
 - Integração com PostgreSQL (os testes usam H2 em memória)
-- Dentistas e tratamentos via API (ainda não existem endpoints)
+- Tratamentos via API (ainda não existem endpoints)
 - Cancelamento e remarcação de agendamentos (funcionalidade ainda não existe)
 
 ## 3. Tipos de teste
@@ -42,6 +42,7 @@ Garantir que o OdontoCare funcione conforme os requisitos (autenticação, agend
 | `AuthIntegrationTest` | Cadastro com sucesso, 409 para e-mail duplicado, 401 sem token, 401 para login inválido |
 | `AuthAndBookingSecurityIntegrationTest` | Códigos de status de cadastro/login, rejeição de token inválido ou expirado em `/me`, e que o usuário só lista e lê os próprios agendamentos |
 | `AuthPersistenceTests` | A conta cadastrada continua existindo após reiniciar a aplicação |
+| `DentistaIntegrationTest` | Dentistas iniciais persistidos e endpoints públicos de lista e detalhe |
 | `ClinicaOdontoApiApplicationTests` | O contexto da aplicação sobe (`contextLoads`) |
 
 **Front-end**
@@ -153,7 +154,6 @@ Legenda: ⬜ não executado · ✅ passou · ❌ falhou
 
 | Risco / lacuna | Impacto | Mitigação |
 |----------------|---------|-----------|
-| Dentistas vêm de um JSON de demonstração, não da API | Testes de dentistas não validam o back-end | Criar `DentistaController` e testes de integração |
 | Sem testes de unidade para `AgendamentoService` | Regras de horário só são validadas manualmente/por API | Adicionar testes cobrindo CT11 a CT17 |
 | Logout só local, token vale até expirar | Token roubado continua válido | Reduzir validade ou criar lista de revogação |
 | Sem CI | Falhas só aparecem se alguém rodar os testes | Criar workflow no GitHub Actions rodando `mvn test` e `npm test` |

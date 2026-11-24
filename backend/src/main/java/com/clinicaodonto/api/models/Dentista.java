@@ -9,7 +9,7 @@ public class Dentista {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String cro;
 
     @Column(nullable = false)
@@ -20,6 +20,7 @@ public class Dentista {
 
     private String telefone;
     private String email;
+    private String fotoUrl;
 
     public Dentista() {}
     public Long getId() { return id; }
@@ -34,4 +35,6 @@ public class Dentista {
     public void setTelefone(String telefone) { this.telefone = telefone; }
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+    public String getFotoUrl() { return fotoUrl; }
+    public void setFotoUrl(String fotoUrl) { this.fotoUrl = fotoUrl; }
 }

@@ -1,24 +1,39 @@
-import { Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 
+import { environment } from '../../../environments/environment';
 import type { Dentista } from '../models/dentista.model';
 
 @Injectable({ providedIn: 'root' })
 export class DentistasService {
-  /** Replace this demo source with the authenticated API adapter when available. */
+  private readonly http = inject(HttpClient);
+  private readonly url = `${environment.apiUrl}/dentistas`;
+
   async listar(): Promise<Dentista[]> {
-    const response = await fetch('assets/data/dentistas-demo.json');
-    if (!response.ok) throw new Error('Falha ao carregar dentistas.');
-    const data: unknown = await response.json();
-    if (!Array.isArray(data) || !data.every((item: unknown) => this.isDentista(item))) {
+    const data = await firstValueFrom(this.http.get<unknown>(this.url));
+    if (!Array.isArray(data)) {
       throw new Error('Lista de dentistas inválida.');
     }
-    return data as Dentista[];
+
+    const dentists: Dentista[] = [];
+    for (const item of data) {
+      if (!this.isDentista(item)) throw new Error('Lista de dentistas inválida.');
+      dentists.push(item);
+    }
+    return dentists;
   }
-  /**Adicionado */
+
   async buscarPorId(id: number): Promise<Dentista | undefined> {
-  const dentistas = await this.listar();
-  return dentistas.find((dentista) => dentista.id === id);
-}
+    try {
+      const data = await firstValueFrom(this.http.get<unknown>(`${this.url}/${id}`));
+      if (!this.isDentista(data)) throw new Error('Dentista inválido.');
+      return data;
+    } catch (error) {
+      if (error instanceof HttpErrorResponse && error.status === 404) return undefined;
+      throw error;
+    }
+  }
 
   private isDentista(value: unknown): value is Dentista {
     if (!value || typeof value !== 'object') return false;
@@ -30,7 +45,11 @@ export class DentistasService {
       typeof item.nome === 'string' &&
       !!item.nome.trim() &&
       typeof item.especialidade === 'string' &&
-      !!item.especialidade.trim()
+      !!item.especialidade.trim() &&
+      (item.cro === null || typeof item.cro === 'string') &&
+      (item.telefone === null || typeof item.telefone === 'string') &&
+      (item.email === null || typeof item.email === 'string') &&
+      (item.fotoUrl === undefined || item.fotoUrl === null || typeof item.fotoUrl === 'string')
     );
   }
 }

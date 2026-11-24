@@ -26,8 +26,8 @@ O OdontoCare é um sistema web para uma clínica odontológica. O usuário cria 
 | RF04 | Criar agendamento com dados do paciente, tratamento, data/hora e dentista | Implementado |
 | RF05 | Listar e consultar apenas os próprios agendamentos | Implementado |
 | RF06 | Consultar horários ocupados de um dia (por dentista ou geral) | Implementado |
-| RF07 | Listar dentistas por especialidade, com busca | Implementado no front, com dados de demonstração |
-| RF08 | Ver detalhes de um dentista (rota protegida) | Implementado no front |
+| RF07 | Listar dentistas por especialidade, com busca | Implementado via API e banco de dados |
+| RF08 | Ver detalhes de um dentista (rota protegida) | Implementado via API |
 | RF09 | Lembretes/notificações no front | Implementado no front |
 
 ### Regras de negócio do agendamento
@@ -102,12 +102,12 @@ OdontoCare/
 │       ├── main/java/com/clinicaodonto/api/
 │       │   ├── ClinicaOdontoApiApplication.java
 │       │   ├── config/        # SecurityConfig, JwtAuthenticationFilter, CustomAuthenticationEntryPoint
-│       │   ├── controllers/   # AuthController, AgendamentoController
+│   │       ├── controllers/   # AuthController, AgendamentoController, DentistaController
 │       │   ├── dtos/          # objetos de entrada e saída da API
 │       │   ├── exceptions/    # GlobalExceptionHandler, EmailDuplicadoException
 │       │   ├── models/        # entidades JPA
 │       │   ├── repositories/  # acesso a dados
-│       │   └── services/      # regras de negócio, JwtService
+│   │       └── services/      # regras de negócio, JwtService, DentistaService
 │       ├── main/resources/application.properties
 │       └── test/              # testes de integração
 ├── frontend/
@@ -127,7 +127,7 @@ OdontoCare/
 | Módulo | Responsabilidade |
 |--------|------------------|
 | Autenticação (`AuthController`, `UsuarioService`, `JwtService`) | Registrar, autenticar, gerar e validar o token |
-| Segurança (`SecurityConfig`, `JwtAuthenticationFilter`) | Liberar só `POST /api/auth/register` e `/login`; exigir token no resto |
+| Segurança (`SecurityConfig`, `JwtAuthenticationFilter`) | Liberar autenticação, cadastro e consulta pública de dentistas; exigir token nas demais rotas |
 | Agendamentos (`AgendamentoController`, `AgendamentoService`) | Criar, listar, consultar e checar disponibilidade |
 | Tratamento de erros (`GlobalExceptionHandler`) | Padronizar respostas de erro em JSON |
 | Front: `core/services` | Comunicação com a API, sessão e notificações |
@@ -140,6 +140,8 @@ OdontoCare/
 | POST | `/api/auth/register` | Público | Cria usuário (201) ou retorna 409 se o e-mail já existe |
 | POST | `/api/auth/login` | Público | Autentica e retorna token |
 | GET | `/api/auth/me` | Autenticado | Dados do usuário do token |
+| GET | `/api/dentistas` | Público | Lista dentistas cadastrados no banco |
+| GET | `/api/dentistas/{id}` | Público | Obtém os dados de um dentista |
 | GET | `/api/agendamentos` | Autenticado | Lista os agendamentos do usuário, ordenados por data |
 | GET | `/api/agendamentos/{id}` | Autenticado | Obtém um agendamento do usuário (404 se não for dele) |
 | GET | `/api/agendamentos/disponibilidade?data=AAAA-MM-DD&dentistaId=` | Autenticado | Lista horários ocupados do dia |
@@ -187,7 +189,7 @@ erDiagram
     }
 ```
 
-Tabelas: `tb_usuarios`, `dentistas`, `agendamentos`, `tratamentos`. `Tratamento` não tem relacionamento: no agendamento, o tratamento é guardado como texto. O schema é criado automaticamente (`ddl-auto=update`).
+Tabelas: `tb_usuarios`, `dentistas`, `agendamentos`, `tratamentos`. `Tratamento` não tem relacionamento: no agendamento, o tratamento é guardado como texto. O schema é criado automaticamente (`ddl-auto=update`). Em um banco sem dentistas, os 12 registros de demonstração são inseridos na inicialização; quando já existem registros, eles são preservados.
 
 ## 9. Configuração e execução
 
@@ -237,7 +239,6 @@ npm start        # http://localhost:4200
 
 Pontos observados no código atual:
 
-- **Dentistas ainda não vêm da API:** `DentistasService` lê `assets/data/dentistas-demo.json`. A entidade e o repositório existem no back-end, mas falta um `DentistaController`.
 - **Tratamentos sem endpoint:** existe o modelo, mas não há controller; o agendamento usa texto livre.
 - **Logout:** o front trata o logout localmente; o back-end não tem rota de logout, e o token continua válido até expirar.
 - **Status do agendamento** é um texto (`PENDENTE`, `CANCELADO`); um `enum` seria mais seguro.

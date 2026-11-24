@@ -1,5 +1,11 @@
 import { expect, test } from '@playwright/test';
 
+const demoDataPath = 'src/assets/data/dentistas-demo.json';
+
+test.beforeEach(async ({ page }) => {
+  await page.route('**/api/dentistas', (route) => route.fulfill({ path: demoDataPath }));
+});
+
 test('seleção da Home filtra dentistas e busca sem acentos funciona', async ({ page }) => {
   await page.goto('/home');
   await page.getByRole('link', { name: 'Ortodontia', exact: true }).click();
@@ -29,13 +35,14 @@ test('filtro direto na URL, sem resultados e limpeza', async ({ page }) => {
 });
 
 test('falha na fonte de dados mostra erro e nova tentativa recupera a lista', async ({ page }) => {
-  await page.route('**/assets/data/dentistas-demo.json', (route) =>
-    route.fulfill({ status: 503, body: 'Unavailable' }),
+  await page.route(
+    '**/api/dentistas',
+    (route) => route.fulfill({ status: 503, body: 'Unavailable' }),
+    { times: 1 },
   );
   await page.goto('/dentistas');
   await expect(page.getByRole('heading', { name: 'Não foi possível carregar os dentistas' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Nenhum profissional encontrado' })).not.toBeVisible();
-  await page.unroute('**/assets/data/dentistas-demo.json');
   await page.getByRole('button', { name: 'Tentar novamente', exact: true }).click();
   await expect(page.locator('.dentist-card')).toHaveCount(12);
 });
