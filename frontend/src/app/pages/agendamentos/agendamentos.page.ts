@@ -1,22 +1,14 @@
-
-import type { OnInit } from '@angular/core';
+﻿import type { OnInit } from '@angular/core';
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import {
-  IonButton,
-  IonContent,
-  IonHeader,
-  IonIcon,
-  IonSkeletonText,
-} from '@ionic/angular';
+import { IonButton, IonContent, IonHeader, IonIcon, IonSkeletonText } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import {
-  calendarOutline,
-  personOutline,
-  refreshOutline,
-} from 'ionicons/icons';
+import { calendarOutline, personOutline, refreshOutline } from 'ionicons/icons';
 
+import { CpfPipe } from '../../shared/pipes/cpf-pipe';
+import { TelefonePipe } from '../../shared/pipes/telefone-pipe';
+import { DataHoraPipe } from '../../shared/pipes/data-hora-pipe';
 import type { Agendamento } from '../../core/models/agendamento.model';
 import { AgendamentosService } from '../../core/services/agendamentos.service';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
@@ -34,6 +26,9 @@ interface Horario {
   templateUrl: './agendamentos.page.html',
   styleUrls: ['./agendamentos.page.scss'],
   imports: [
+    CpfPipe,
+    TelefonePipe,
+    DataHoraPipe,
     PageHeaderComponent,
     SiteFooterComponent,
     RouterLink,
@@ -83,11 +78,7 @@ export class AgendamentosPage implements OnInit {
     return periodos.flatMap((periodo) => {
       const slots: Horario[] = [];
 
-      for (
-        let minutos = periodo.inicio;
-        minutos < periodo.fim;
-        minutos += 30
-      ) {
+      for (let minutos = periodo.inicio; minutos < periodo.fim; minutos += 30) {
         const hora = Math.floor(minutos / 60);
         const minuto = minutos % 60;
         const proximoMinuto = minutos + 30;
@@ -96,8 +87,7 @@ export class AgendamentosPage implements OnInit {
         const fim = `${String(Math.floor(proximoMinuto / 60)).padStart(2, '0')}:${String(proximoMinuto % 60).padStart(2, '0')}`;
 
         const horarioPassou =
-          dataSelecionada === this.getToday() &&
-          new Date(`${dataSelecionada}T${inicio}:00`) <= agora;
+          dataSelecionada === this.getToday() && new Date(`${dataSelecionada}T${inicio}:00`) <= agora;
 
         slots.push({
           inicio,
@@ -113,10 +103,7 @@ export class AgendamentosPage implements OnInit {
 
   readonly form = this.fb.nonNullable.group({
     nomePaciente: ['', Validators.required],
-    cpfPaciente: ['', [
-      Validators.required,
-      Validators.pattern(/^\d{11}$/),
-    ]],
+    cpfPaciente: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]],
     telefonePaciente: ['', Validators.required],
     dataHora: ['', Validators.required],
     tratamento: ['', Validators.required],
@@ -176,9 +163,7 @@ export class AgendamentosPage implements OnInit {
   }
 
   selecionarHorario(horario: string): void {
-    this.form.controls.dataHora.setValue(
-      `${this.selectedDate()}T${horario}:00`,
-    );
+    this.form.controls.dataHora.setValue(`${this.selectedDate()}T${horario}:00`);
     this.form.controls.dataHora.markAsTouched();
     this.formError.set('');
   }
@@ -191,15 +176,10 @@ export class AgendamentosPage implements OnInit {
     this.occupiedTimes.set([]);
 
     try {
-      const ocupados = await this.service.horariosOcupados(
-        this.selectedDate(),
-        this.dentistaId(),
-      );
+      const ocupados = await this.service.horariosOcupados(this.selectedDate(), this.dentistaId());
 
       if (version === this.availabilityVersion && !this.destroyRef.destroyed) {
-        this.occupiedTimes.set(
-          ocupados.map((horario) => horario.slice(0, 5)),
-        );
+        this.occupiedTimes.set(ocupados.map((horario) => horario.slice(0, 5)));
       }
     } catch {
       if (version === this.availabilityVersion && !this.destroyRef.destroyed) {

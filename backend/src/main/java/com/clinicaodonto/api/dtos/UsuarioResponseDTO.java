@@ -12,4 +12,7 @@ public class UsuarioResponseDTO {
     private String nome;
     private String email;
     private String token;
+    private String telefone;
+    private String cpf;
+    private java.time.LocalDate dataNascimento;
 }

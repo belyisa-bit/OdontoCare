@@ -3,6 +3,7 @@ package com.clinicaodonto.api.controllers;
 import com.clinicaodonto.api.dtos.UsuarioLoginDTO;
 import com.clinicaodonto.api.dtos.UsuarioRegisterDTO;
 import com.clinicaodonto.api.dtos.UsuarioResponseDTO;
+import com.clinicaodonto.api.dtos.UsuarioPerfilDTO;
 import com.clinicaodonto.api.services.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -32,5 +33,11 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<UsuarioResponseDTO> me(Authentication authentication) {
         return ResponseEntity.ok(usuarioService.obterPorEmail(authentication.getName()));
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<UsuarioResponseDTO> atualizarPerfil(
+            Authentication authentication, @Valid @RequestBody UsuarioPerfilDTO dados) {
+        return ResponseEntity.ok(usuarioService.atualizarPerfil(authentication.getName(), dados));
     }
 }

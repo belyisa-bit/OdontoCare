@@ -1,3 +1,4 @@
+﻿import { TelefonePipe } from '../../shared/pipes/telefone-pipe';
 
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
@@ -13,14 +14,7 @@ import { SiteFooterComponent } from '../../shared/components/site-footer/site-fo
   selector: 'app-detalhes',
   templateUrl: './detalhes.page.html',
   styleUrls: ['./detalhes.page.scss'],
-  imports: [
-    CommonModule,
-    RouterLink,
-    PageHeaderComponent,
-    SiteFooterComponent,
-    IonContent,
-    IonHeader,
-  ],
+  imports: [TelefonePipe, CommonModule, RouterLink, PageHeaderComponent, SiteFooterComponent, IonContent, IonHeader],
 })
 export class DetalhesPage {
   private readonly route = inject(ActivatedRoute);

@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+﻿import { computed, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { AUTH_GATEWAY } from '../models/auth.model';
@@ -89,5 +89,13 @@ export class AuthService {
   private setUser(user: AuthUser | null): void {
     this.account.set(user);
     this.notifications.setSession(user?.id ?? null);
+  }
+
+  async updateProfile(details: { telefone: string; cpf: string; dataNascimento: string | null }): Promise<void> {
+    if (!this.gateway?.updateProfile) throw new Error('Atualização indisponível.');
+    const version = this.requestVersion;
+    const user = await this.gateway.updateProfile(details);
+    if (version !== this.requestVersion) throw new Error('Sessão alterada. Entre novamente.');
+    this.setUser(user);
   }
 }

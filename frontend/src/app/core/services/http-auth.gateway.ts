@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+﻿import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom, TimeoutError } from 'rxjs';
 
@@ -34,6 +34,15 @@ export class HttpAuthGateway implements AuthGateway {
 
   login(credentials: LoginCredentials): Promise<AuthUser> {
     return this.authenticate('login', credentials);
+  }
+  async updateProfile(details: { telefone: string; cpf: string; dataNascimento: string | null }): Promise<AuthUser> {
+    try {
+      return this.userFrom(
+        await firstValueFrom(this.http.put<unknown>(`${this.url}/me`, details, { timeout: AUTH_REQUEST_TIMEOUT_MS })),
+      );
+    } catch (error) {
+      throw this.apiError(error, false);
+    }
   }
   register(details: Registration): Promise<AuthUser> {
     return this.authenticate('register', details);
@@ -74,7 +83,14 @@ export class HttpAuthGateway implements AuthGateway {
       !user['email'].trim()
     )
       throw new Error('Resposta de autenticação inválida.');
-    return { id: String(id), nome: user['nome'], email: user['email'] };
+    return {
+      id: String(id),
+      nome: user['nome'],
+      email: user['email'],
+      ...(typeof user['cpf'] === 'string' ? { cpf: user['cpf'] } : {}),
+      ...(typeof user['telefone'] === 'string' ? { telefone: user['telefone'] } : {}),
+      ...(typeof user['dataNascimento'] === 'string' ? { dataNascimento: user['dataNascimento'] } : {}),
+    };
   }
 
   private apiError(error: unknown, registration: boolean): AuthApiError {

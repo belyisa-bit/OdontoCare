@@ -3,6 +3,7 @@ package com.clinicaodonto.api.services;
 import com.clinicaodonto.api.dtos.UsuarioLoginDTO;
 import com.clinicaodonto.api.dtos.UsuarioRegisterDTO;
 import com.clinicaodonto.api.dtos.UsuarioResponseDTO;
+import com.clinicaodonto.api.dtos.UsuarioPerfilDTO;
 import com.clinicaodonto.api.exceptions.EmailDuplicadoException;
 import com.clinicaodonto.api.models.Usuario;
 import com.clinicaodonto.api.repositories.UsuarioRepository;
@@ -52,12 +53,24 @@ public class UsuarioService {
         return toResponse(usuario, null);
     }
 
+    public UsuarioResponseDTO atualizarPerfil(String email, UsuarioPerfilDTO dados) {
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario nao encontrado"));
+        usuario.setTelefone(dados.getTelefone() == null || dados.getTelefone().isBlank() ? null : dados.getTelefone());
+        usuario.setDataNascimento(dados.getDataNascimento());
+        usuario.setCpf(dados.getCpf() == null || dados.getCpf().isBlank() ? null : dados.getCpf());
+        return toResponse(usuarioRepository.save(usuario), null);
+    }
+
     private UsuarioResponseDTO toResponse(Usuario usuario, String token) {
         UsuarioResponseDTO dto = new UsuarioResponseDTO();
         dto.setId(usuario.getId());
         dto.setNome(usuario.getNome());
         dto.setEmail(usuario.getEmail());
         dto.setToken(token);
+        dto.setTelefone(usuario.getTelefone());
+        dto.setCpf(usuario.getCpf());
+        dto.setDataNascimento(usuario.getDataNascimento());
         return dto;
     }
 }

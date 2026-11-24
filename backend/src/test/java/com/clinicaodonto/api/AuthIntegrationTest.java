@@ -20,6 +20,32 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class AuthIntegrationTest {
 
+    @Test
+    void devePersistirPerfilEValidarDados() throws Exception {
+        String cadastro = """
+                {"nome":"Perfil Teste","email":"perfil.integration@odontocare.com","senha":"Senha@Forte2026"}
+                """;
+        String resposta = mockMvc.perform(post("/api/auth/register")
+                .contentType(MediaType.APPLICATION_JSON).content(cadastro))
+                .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
+        String token = objectMapper.readTree(resposta).get("token").asText();
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/auth/me")
+                .header("Authorization", "Bearer " + token).contentType(MediaType.APPLICATION_JSON)
+                .content("{\"telefone\":\"11999998888\",\"dataNascimento\":\"2000-05-20\"}"))
+                .andExpect(status().isOk());
+        mockMvc.perform(get("/api/auth/me").header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.telefone").value("11999998888"))
+                .andExpect(jsonPath("$.dataNascimento").value("2000-05-20"));
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/auth/me")
+                .header("Authorization", "Bearer " + token).contentType(MediaType.APPLICATION_JSON)
+                .content("{\"telefone\":\"123\",\"dataNascimento\":\"2999-01-01\"}"))
+                .andExpect(status().isBadRequest());
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/auth/me")
+                .contentType(MediaType.APPLICATION_JSON).content("{}"))
+                .andExpect(status().isUnauthorized());
+    }
+
     @Autowired
     private MockMvc mockMvc;
 
