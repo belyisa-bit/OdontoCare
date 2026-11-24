@@ -3,12 +3,15 @@ package com.clinicaodonto.api.services;
 
 import com.clinicaodonto.api.dtos.AgendamentoCreateDTO;
 import com.clinicaodonto.api.dtos.AgendamentoDTO;
+import com.clinicaodonto.api.dtos.DentistaDTO;
 import com.clinicaodonto.api.models.Agendamento;
+import com.clinicaodonto.api.models.Dentista;
 import com.clinicaodonto.api.repositories.AgendamentoRepository;
 import com.clinicaodonto.api.repositories.DentistaRepository;
 import com.clinicaodonto.api.repositories.UsuarioRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
@@ -36,6 +39,7 @@ public class AgendamentoService {
         this.usuarioRepository = usuarioRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<AgendamentoDTO> listarPorUsuarioAutenticado(String emailUsuario) {
         return agendamentoRepository
                 .findByUsuarioEmailOrderByDataHoraAsc(emailUsuario)
@@ -44,6 +48,7 @@ public class AgendamentoService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public AgendamentoDTO obterDoUsuario(Long id, String emailUsuario) {
         return agendamentoRepository.findByIdAndUsuarioEmail(id, emailUsuario)
                 .map(this::toDTO)
@@ -53,6 +58,7 @@ public class AgendamentoService {
                 ));
     }
 
+    @Transactional(readOnly = true)
     public List<LocalTime> listarHorariosOcupados(LocalDate data, Long dentistaId) {
         LocalDateTime inicio = data.atStartOfDay();
         LocalDateTime fim = data.plusDays(1).atStartOfDay().minusNanos(1);
@@ -78,6 +84,7 @@ public class AgendamentoService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public AgendamentoDTO criar(AgendamentoCreateDTO dto, String emailUsuario) {
         LocalDateTime dataHora = dto.getDataHora();
 
@@ -99,11 +106,13 @@ public class AgendamentoService {
         agendamento.setStatus("PENDENTE");
 
         if (dto.getDentistaId() != null) {
-            agendamento.setDentista(dentistaRepository.findById(dto.getDentistaId())
+            Dentista dentista = dentistaRepository.findById(dto.getDentistaId())
                     .orElseThrow(() -> new ResponseStatusException(
                             HttpStatus.NOT_FOUND,
                             "Dentista não encontrado"
-                    )));
+                    ));
+
+            agendamento.setDentista(dentista);
         }
 
         Agendamento salvo = agendamentoRepository.save(agendamento);
@@ -158,6 +167,7 @@ public class AgendamentoService {
 
     private AgendamentoDTO toDTO(Agendamento entity) {
         AgendamentoDTO dto = new AgendamentoDTO();
+
         dto.setId(entity.getId());
         dto.setNomePaciente(entity.getNomePaciente());
         dto.setCpfPaciente(entity.getCpfPaciente());
@@ -167,7 +177,17 @@ public class AgendamentoService {
         dto.setStatus(entity.getStatus());
 
         if (entity.getDentista() != null) {
-            dto.setDentistaId(entity.getDentista().getId());
+            Dentista dentista = entity.getDentista();
+
+            dto.setDentistaId(dentista.getId());
+            dto.setDentista(new DentistaDTO(
+                    dentista.getId(),
+                    dentista.getNome(),
+                    dentista.getCro(),
+                    dentista.getEspecialidade(),
+                    dentista.getTelefone(),
+                    dentista.getEmail()
+            ));
         }
 
         return dto;
